@@ -1,0 +1,801 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Prime-style Viewer</title>
+  <style>
+    :root {
+      --bg: #0f171e;
+      --surface: #1a242f;
+      --text: #f2f4f5;
+      --text-secondary: #8197a4;
+      --accent: #00a8e1;
+      --gradient-top: linear-gradient(180deg, rgba(0,0,0,.72) 0%, rgba(0,0,0,.3) 55%, transparent 100%);
+      --gradient-bottom: linear-gradient(0deg, rgba(0,0,0,.88) 0%, rgba(0,0,0,.4) 50%, transparent 100%);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+
+    body {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      background: #000;
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Full-bleed player ── */
+    .player {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      overflow: hidden;
+    }
+    .player video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      background: #000;
+    }
+
+    /* ── Top chrome ── */
+    .top-chrome {
+      position: absolute;
+      inset: 0 0 auto 0;
+      padding: 20px 28px;
+      background: var(--gradient-top);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      z-index: 10;
+      opacity: 1;
+      transition: opacity .3s ease;
+    }
+    .top-left { display: flex; align-items: center; gap: 16px; }
+    .top-right { display: flex; align-items: center; gap: 10px; }
+
+    .back-btn {
+      appearance: none; background: none; border: none;
+      color: var(--text); cursor: pointer;
+      padding: 8px; margin: -8px;
+      display: flex; align-items: center;
+      transition: opacity .15s;
+    }
+    .back-btn:hover { opacity: .7; }
+    .back-btn svg { width: 24px; height: 24px; }
+
+    .now-playing .np-title {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -.2px;
+    }
+    .now-playing .np-info {
+      margin-top: 3px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .now-playing .np-info .dot { opacity: .5; }
+
+    /* ── Save the Look button (bottom controls) ── */
+    @font-face {
+      font-family: 'Decalotype';
+      src: url('Decalotype.otf') format('opentype');
+      font-weight: 100 900;
+      font-display: swap;
+    }
+    .save-look-btn {
+      appearance: none;
+      background: none;
+      border: 1px solid rgba(230,240,3,.4);
+      color: #e6f003;
+      font-family: 'Decalotype', 'Helvetica Neue', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: .06em;
+      padding: 7px 16px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background .2s, color .2s;
+      border-radius: 2px;
+    }
+    .save-look-btn:hover {
+      background: #e6f003;
+      color: #0A0A0A;
+    }
+
+    /* ── Chrome buttons ── */
+    .chrome-btn {
+      appearance: none; background: none; border: none;
+      color: var(--text); cursor: pointer;
+      padding: 8px; border-radius: 4px;
+      font-size: 13px; font-weight: 600;
+      display: flex; align-items: center; gap: 6px;
+      transition: background .15s;
+    }
+    .chrome-btn:hover { background: rgba(255,255,255,.1); }
+    .chrome-btn svg { width: 20px; height: 20px; }
+    .chrome-btn .kbd {
+      font-size: 10px; font-weight: 500;
+      padding: 1px 5px; border-radius: 3px;
+      border: 1px solid rgba(255,255,255,.2);
+      color: var(--text-secondary);
+    }
+
+    /* ── Bottom controls ── */
+    .bottom-chrome {
+      position: absolute;
+      inset: auto 0 0 0;
+      padding: 0 28px 20px;
+      background: var(--gradient-bottom);
+      z-index: 10;
+      opacity: 1;
+      transition: opacity .3s ease;
+    }
+
+    .scrub-container {
+      position: relative; height: 28px;
+      display: flex; align-items: center;
+      cursor: pointer; margin-bottom: 6px;
+    }
+    .scrub-track {
+      position: absolute; left: 0; right: 0;
+      height: 3px; background: rgba(255,255,255,.2);
+      border-radius: 2px; transition: height .1s;
+    }
+    .scrub-container:hover .scrub-track { height: 5px; }
+    .scrub-buffer {
+      position: absolute; left: 0; top: 0; bottom: 0;
+      background: rgba(255,255,255,.3); border-radius: 2px; width: 0%;
+    }
+    .scrub-progress {
+      position: absolute; left: 0; top: 0; bottom: 0;
+      background: var(--accent); border-radius: 2px; width: 0%;
+    }
+    .scrub-thumb {
+      position: absolute; top: 50%; left: 0%;
+      width: 14px; height: 14px;
+      background: var(--accent); border-radius: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0; transition: opacity .1s;
+      box-shadow: 0 0 8px rgba(0,168,225,.4);
+    }
+    .scrub-container:hover .scrub-thumb { opacity: 1; }
+
+    .controls-row { display: flex; align-items: center; gap: 4px; }
+
+    .ctrl-btn {
+      appearance: none; background: none; border: none;
+      color: var(--text); cursor: pointer;
+      padding: 8px; border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .12s;
+    }
+    .ctrl-btn:hover { background: rgba(255,255,255,.1); }
+    .ctrl-btn svg { width: 24px; height: 24px; }
+    .ctrl-btn.play-btn svg { width: 32px; height: 32px; }
+
+    .time-display {
+      font-size: 13px; font-weight: 500;
+      color: rgba(255,255,255,.85);
+      padding: 0 8px; min-width: 100px;
+      font-variant-numeric: tabular-nums;
+    }
+    .spacer { flex: 1; }
+
+    .volume-group { display: flex; align-items: center; gap: 2px; }
+    .volume-slider {
+      width: 80px; height: 3px;
+      appearance: none; background: rgba(255,255,255,.2);
+      border-radius: 2px; outline: none; cursor: pointer;
+    }
+    .volume-slider::-webkit-slider-thumb {
+      appearance: none; width: 12px; height: 12px;
+      border-radius: 50%; background: var(--text); cursor: pointer;
+    }
+    .volume-slider::-moz-range-thumb {
+      width: 12px; height: 12px; border-radius: 50%;
+      background: var(--text); border: none; cursor: pointer;
+    }
+
+    .speed-select {
+      appearance: none; background: none; border: none;
+      color: var(--text); font-family: inherit;
+      font-size: 13px; font-weight: 600;
+      padding: 8px; cursor: pointer; border-radius: 4px;
+      transition: background .12s;
+    }
+    .speed-select:hover { background: rgba(255,255,255,.1); }
+    .speed-select option { background: var(--surface); }
+
+    /* ── Episodes tray ── */
+    .episodes-tray {
+      position: absolute;
+      inset: auto 0 0 0;
+      z-index: 20;
+      background: linear-gradient(0deg, rgba(15,23,30,.97) 0%, rgba(15,23,30,.94) 80%, rgba(15,23,30,.85) 100%);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(255,255,255,.08);
+      transform: translateY(100%);
+      transition: transform .3s cubic-bezier(.4,0,.2,1);
+      display: flex;
+      flex-direction: column;
+    }
+    .episodes-tray.open { transform: translateY(0); }
+
+    .tray-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 28px 12px;
+      flex-shrink: 0;
+    }
+    .tray-header h3 { font-size: 15px; font-weight: 700; letter-spacing: .2px; }
+    .tray-close {
+      appearance: none; background: none; border: none;
+      color: var(--text-secondary); cursor: pointer;
+      padding: 4px; transition: color .15s;
+    }
+    .tray-close:hover { color: var(--text); }
+    .tray-close svg { width: 20px; height: 20px; }
+
+    .tray-scroll {
+      display: flex;
+      gap: 12px;
+      padding: 0 28px 20px;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+    }
+    .tray-scroll::-webkit-scrollbar { height: 4px; }
+    .tray-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,.15); border-radius: 4px; }
+
+    .vid-card {
+      flex-shrink: 0;
+      width: 220px;
+      cursor: pointer;
+      border-radius: 4px;
+      overflow: hidden;
+      border: 2px solid transparent;
+      transition: border-color .15s, transform .15s;
+      background: rgba(255,255,255,.03);
+    }
+    .vid-card:hover { border-color: rgba(255,255,255,.2); transform: translateY(-2px); }
+    .vid-card.active { border-color: var(--accent); }
+
+    .vid-card .vc-thumb {
+      width: 100%; height: 124px;
+      background: linear-gradient(135deg, rgba(0,168,225,.12), rgba(255,255,255,.03));
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .vid-card .vc-thumb .play-overlay {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(0,0,0,.3);
+      opacity: 0; transition: opacity .15s;
+    }
+    .vid-card:hover .play-overlay { opacity: 1; }
+    .play-overlay svg { width: 36px; height: 36px; fill: white; filter: drop-shadow(0 2px 8px rgba(0,0,0,.5)); }
+
+    .vid-card .vc-now {
+      position: absolute; top: 8px; left: 8px;
+      font-size: 10px; font-weight: 700;
+      letter-spacing: .6px; text-transform: uppercase;
+      padding: 3px 8px; border-radius: 2px;
+      background: var(--accent); color: #fff;
+      display: none;
+    }
+    .vid-card.active .vc-now { display: block; }
+
+    .vid-card .vc-body { padding: 10px 12px; }
+    .vid-card .vc-name {
+      font-size: 13px; font-weight: 700;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .vid-card .vc-file {
+      font-size: 11px; color: var(--text-secondary);
+      margin-top: 3px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    /* ── Overlay panels ── */
+    .overlay-panel {
+      position: absolute; z-index: 15;
+      background: rgba(15,23,30,.92);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 4px;
+      display: none;
+      box-shadow: 0 8px 32px rgba(0,0,0,.5);
+    }
+
+    .xray-panel { right: 28px; top: 72px; width: 400px; max-width: calc(100% - 56px); padding: 20px; }
+    .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .panel-header h3 { font-size: 16px; font-weight: 700; }
+    .close-panel {
+      appearance: none; background: none; border: none;
+      color: var(--text-secondary); cursor: pointer; padding: 4px; transition: color .15s;
+    }
+    .close-panel:hover { color: var(--text); }
+    .close-panel svg { width: 20px; height: 20px; }
+
+    .xray-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .xray-card { padding: 12px; background: rgba(255,255,255,.04); border-radius: 4px; }
+    .xray-card .card-label {
+      font-size: 11px; font-weight: 700;
+      letter-spacing: .5px; text-transform: uppercase;
+      color: var(--text-secondary); margin-bottom: 6px;
+    }
+    .xray-card .card-body { font-size: 13px; line-height: 1.5; color: rgba(255,255,255,.8); }
+    .xray-card .card-body b { color: var(--text); font-weight: 600; }
+
+    .stats-panel { left: 28px; top: 72px; width: 320px; padding: 20px; }
+    .stats-panel h3 { font-size: 14px; font-weight: 700; margin-bottom: 12px; }
+    .stat-row {
+      display: flex; justify-content: space-between;
+      padding: 6px 0; font-size: 12px;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .stat-row:last-child { border-bottom: none; }
+    .stat-row .stat-key { color: var(--text-secondary); }
+    .stat-row .stat-val { font-weight: 700; font-variant-numeric: tabular-nums; }
+
+    .upnext-panel { left: 28px; bottom: 100px; width: 380px; max-width: calc(100% - 56px); padding: 16px; }
+    .upnext-content { display: flex; gap: 14px; align-items: flex-start; }
+    .upnext-thumb {
+      width: 120px; height: 68px; border-radius: 4px;
+      background: linear-gradient(135deg, rgba(0,168,225,.2), rgba(255,255,255,.04));
+      flex-shrink: 0;
+    }
+    .upnext-info .un-label {
+      font-size: 11px; font-weight: 700;
+      letter-spacing: .5px; text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+    .upnext-info .un-title { font-size: 14px; font-weight: 700; margin-top: 4px; }
+    .upnext-info .un-countdown { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+    .upnext-actions { display: flex; gap: 8px; margin-top: 10px; }
+    .action-btn {
+      appearance: none; border: none;
+      padding: 8px 16px; border-radius: 4px;
+      font-family: inherit; font-size: 12px; font-weight: 700;
+      cursor: pointer; transition: background .15s;
+    }
+    .action-btn.primary { background: var(--text); color: var(--bg); }
+    .action-btn.primary:hover { background: rgba(255,255,255,.85); }
+    .action-btn.secondary { background: rgba(255,255,255,.15); color: var(--text); }
+    .action-btn.secondary:hover { background: rgba(255,255,255,.2); }
+
+    /* ── Idle ── */
+    .player.idle .top-chrome,
+    .player.idle .bottom-chrome { opacity: 0; pointer-events: none; }
+  </style>
+</head>
+<body>
+
+<main class="player" id="player">
+  <video id="vid" playsinline muted autoplay loop preload="auto">
+    <source id="src" src="Saiyaara.mp4" type="video/mp4" />
+  </video>
+
+  <!-- Top chrome -->
+  <div class="top-chrome" id="topChrome">
+    <div class="top-left">
+      <button class="back-btn" id="backBtn" title="Back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+      </button>
+      <div class="now-playing">
+        <div class="np-title" id="titleText">Saiyaara</div>
+        <div class="np-info">
+          <span>2026</span>
+          <span class="dot">&middot;</span>
+          <span>U/A 13+</span>
+        </div>
+      </div>
+    </div>
+    <div class="top-right">
+      <button class="chrome-btn" id="xrayBtn" title="X-Ray">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <span>X-Ray</span>
+        <span class="kbd">X</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- X-Ray -->
+  <div class="overlay-panel xray-panel" id="xray">
+    <div class="panel-header">
+      <h3>X-Ray</h3>
+      <button class="close-panel" id="xrayClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg></button>
+    </div>
+    <div class="xray-grid">
+      <div class="xray-card"><div class="card-label">On Screen</div><div class="card-body"><b>Character A</b> &mdash; Actor One<br/><b>Character B</b> &mdash; Actor Two</div></div>
+      <div class="xray-card"><div class="card-label">Scene</div><div class="card-body">A tense moment in the corridor.<br/>Location: Studio Set 3</div></div>
+      <div class="xray-card"><div class="card-label">Trivia</div><div class="card-body">This shot is a one-take replica for the mock UI.</div></div>
+      <div class="xray-card"><div class="card-label">Products</div><div class="card-body">Jacket &middot; Sneakers &middot; Watch</div></div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="overlay-panel stats-panel" id="stats">
+    <h3>Playback Stats</h3>
+    <div class="stat-row"><span class="stat-key">Resolution</span><span class="stat-val" id="stRes">&mdash;</span></div>
+    <div class="stat-row"><span class="stat-key">Dropped Frames</span><span class="stat-val" id="stDrop">&mdash;</span></div>
+    <div class="stat-row"><span class="stat-key">Playback Rate</span><span class="stat-val" id="stRate">&mdash;</span></div>
+    <div class="stat-row"><span class="stat-key">Buffered</span><span class="stat-val" id="stBuf">&mdash;</span></div>
+    <div class="stat-row"><span class="stat-key">Loop Count</span><span class="stat-val" id="stLoop">0</span></div>
+  </div>
+
+  <!-- Up Next -->
+  <div class="overlay-panel upnext-panel" id="upnext">
+    <div class="upnext-content">
+      <div class="upnext-thumb"></div>
+      <div class="upnext-info">
+        <div class="un-label">Up Next</div>
+        <div class="un-title" id="upnextTitle">Episode 2</div>
+        <div class="un-countdown">Autoplays in <b id="upnextCountdown">8</b>s</div>
+        <div class="upnext-actions">
+          <button class="action-btn primary" id="playNextBtn">Play Now</button>
+          <button class="action-btn secondary" id="cancelNextBtn">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Episodes tray -->
+  <div class="episodes-tray" id="episodesTray">
+    <div class="tray-header">
+      <h3>Episodes</h3>
+      <button class="tray-close" id="trayClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg></button>
+    </div>
+    <div class="tray-scroll" id="trayScroll"></div>
+  </div>
+
+  <!-- Bottom controls -->
+  <div class="bottom-chrome" id="bottomChrome">
+    <div class="scrub-container" id="scrubContainer">
+      <div class="scrub-track">
+        <div class="scrub-buffer" id="scrubBuffer"></div>
+        <div class="scrub-progress" id="scrubProgress"></div>
+      </div>
+      <div class="scrub-thumb" id="scrubThumb"></div>
+    </div>
+
+    <div class="controls-row">
+      <button class="ctrl-btn play-btn" id="playBtn" title="Play / Pause (Space)">
+        <svg id="playIcon" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+      </button>
+      <button class="ctrl-btn" id="rewBtn" title="Rewind 10s">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/><text x="12" y="16" text-anchor="middle" font-size="8" fill="currentColor" stroke="none" font-weight="700">10</text></svg>
+      </button>
+      <button class="ctrl-btn" id="fwdBtn" title="Forward 10s">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.13-9.36L23 10"/><text x="12" y="16" text-anchor="middle" font-size="8" fill="currentColor" stroke="none" font-weight="700">10</text></svg>
+      </button>
+
+      <div class="volume-group">
+        <button class="ctrl-btn" id="muteBtn" title="Mute (M)">
+          <svg id="volIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+        </button>
+        <input class="volume-slider" id="vol" type="range" min="0" max="1" step="0.01" value="0.8" />
+      </div>
+
+      <span class="time-display" id="timeDisplay">00:00 / 00:00</span>
+
+      <div class="spacer"></div>
+
+      <!-- Save the Look -->
+      <button class="save-look-btn" id="shopBtn" title="Save the Look">Save the Look</button>
+
+      <!-- Episodes button -->
+      <button class="ctrl-btn" id="episodesBtn" title="Episodes (E)" style="gap:6px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="5" rx="1"/><rect x="2" y="10" width="20" height="5" rx="1"/><rect x="2" y="17" width="12" height="5" rx="1"/></svg>
+        <span style="font-size:13px;font-weight:600">Episodes</span>
+      </button>
+
+      <select class="speed-select" id="speed" title="Playback speed">
+        <option value="0.5">0.5x</option>
+        <option value="0.75">0.75x</option>
+        <option value="1" selected>1x</option>
+        <option value="1.25">1.25x</option>
+        <option value="1.5">1.5x</option>
+        <option value="2">2x</option>
+      </select>
+
+      <button class="ctrl-btn" id="ccBtn" title="Subtitles">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><text x="12" y="15" text-anchor="middle" font-size="8" fill="currentColor" stroke="none" font-weight="700">CC</text></svg>
+      </button>
+
+      <button class="ctrl-btn" id="statsBtn" title="Stats (S)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="12" width="4" height="8"/><rect x="10" y="8" width="4" height="12"/><rect x="17" y="4" width="4" height="16"/></svg>
+      </button>
+
+      <button class="ctrl-btn" id="fsBtn" title="Fullscreen (F)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
+      </button>
+    </div>
+  </div>
+</main>
+
+<script>
+  /* ════════════════════════════════════════════
+     VIDEO LIBRARY
+     ────────────────────────────────────────────
+     Add / remove entries here. Each needs:
+       file  — mp4 filename (same folder as HTML)
+       title — display name shown in player
+     ════════════════════════════════════════════ */
+  const VIDEOS = [
+    { file: "Saiyaara.mp4",   title: "Saiyaara" },
+    { file: "Episode2.mp4",   title: "Episode 2 — UI Demo" },
+    { file: "BTS.mp4",        title: "Behind the Scenes" },
+  ];
+
+  /* ── DOM ── */
+  const player       = document.getElementById('player');
+  const vid          = document.getElementById('vid');
+  const vidSrc       = document.getElementById('src');
+  const playBtn      = document.getElementById('playBtn');
+  const playIcon     = document.getElementById('playIcon');
+  const muteBtn      = document.getElementById('muteBtn');
+  const volIcon      = document.getElementById('volIcon');
+  const vol          = document.getElementById('vol');
+  const speed        = document.getElementById('speed');
+  const timeDisplay  = document.getElementById('timeDisplay');
+  const scrubContainer = document.getElementById('scrubContainer');
+  const scrubProgress  = document.getElementById('scrubProgress');
+  const scrubBuffer    = document.getElementById('scrubBuffer');
+  const scrubThumb     = document.getElementById('scrubThumb');
+  const xray         = document.getElementById('xray');
+  const xrayBtn      = document.getElementById('xrayBtn');
+  const xrayClose    = document.getElementById('xrayClose');
+  const stats        = document.getElementById('stats');
+  const statsBtn     = document.getElementById('statsBtn');
+  const fsBtn        = document.getElementById('fsBtn');
+  const rewBtn       = document.getElementById('rewBtn');
+  const fwdBtn       = document.getElementById('fwdBtn');
+  const ccBtn        = document.getElementById('ccBtn');
+  const upnext       = document.getElementById('upnext');
+  const upnextTitle  = document.getElementById('upnextTitle');
+  const upnextCountdown = document.getElementById('upnextCountdown');
+  const playNextBtn  = document.getElementById('playNextBtn');
+  const cancelNextBtn = document.getElementById('cancelNextBtn');
+  const titleText    = document.getElementById('titleText');
+  const stRes = document.getElementById('stRes');
+  const stDrop = document.getElementById('stDrop');
+  const stRate = document.getElementById('stRate');
+  const stBuf = document.getElementById('stBuf');
+  const stLoop = document.getElementById('stLoop');
+  const episodesTray = document.getElementById('episodesTray');
+  const episodesBtn  = document.getElementById('episodesBtn');
+  const trayClose    = document.getElementById('trayClose');
+  const trayScroll   = document.getElementById('trayScroll');
+
+  /* ── State ── */
+  let currentIdx = 0;
+  vid.muted = true;
+  vid.autoplay = true;
+  vid.loop = true;
+
+  /* ── Load video ── */
+  function loadVideo(idx) {
+    if (idx < 0 || idx >= VIDEOS.length) return;
+    currentIdx = idx;
+    const v = VIDEOS[idx];
+    vidSrc.src = v.file;
+    vid.load();
+    vid.play().catch(() => {});
+    titleText.textContent = v.title;
+    loopCount = 0;
+    stLoop.textContent = '0';
+    renderTray();
+    updatePlayIcon();
+    if (idx + 1 < VIDEOS.length) upnextTitle.textContent = VIDEOS[idx + 1].title;
+  }
+
+  /* ── Tray cards ── */
+  function renderTray() {
+    trayScroll.innerHTML = '';
+    VIDEOS.forEach((v, i) => {
+      const card = document.createElement('div');
+      card.className = 'vid-card' + (i === currentIdx ? ' active' : '');
+      card.innerHTML = `
+        <div class="vc-thumb">
+          <div class="play-overlay"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>
+          <div class="vc-now">Now Playing</div>
+        </div>
+        <div class="vc-body">
+          <div class="vc-name">${v.title}</div>
+          <div class="vc-file">${v.file}</div>
+        </div>`;
+      card.addEventListener('click', () => { loadVideo(i); closeTray(); });
+      trayScroll.appendChild(card);
+    });
+  }
+
+  /* ── Tray open / close ── */
+  function openTray()  { episodesTray.classList.add('open'); wakeUI(); }
+  function closeTray() { episodesTray.classList.remove('open'); wakeUI(); }
+  function toggleTray() { episodesTray.classList.contains('open') ? closeTray() : openTray(); }
+  episodesBtn.addEventListener('click', toggleTray);
+  trayClose.addEventListener('click', closeTray);
+
+  /* ── Idle hide ── */
+  let idleTimer = null;
+  const IDLE_MS = 2500;
+  function wakeUI() {
+    player.classList.remove('idle');
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(() => {
+      if (xray.style.display === 'block' || stats.style.display === 'block' ||
+          upnext.style.display === 'block' || episodesTray.classList.contains('open')) return;
+      player.classList.add('idle');
+    }, IDLE_MS);
+  }
+  ['mousemove','mousedown','touchstart','touchmove','keydown'].forEach(e =>
+    window.addEventListener(e, wakeUI, { passive: true })
+  );
+  wakeUI();
+
+  /* ── Helpers ── */
+  function fmt(t) {
+    if (!isFinite(t)) return '00:00';
+    return `${String(Math.floor(t/60)).padStart(2,'0')}:${String(Math.floor(t%60)).padStart(2,'0')}`;
+  }
+
+  const playSVG  = '<polygon points="5,3 19,12 5,21"/>';
+  const pauseSVG = '<rect x="5" y="3" width="4" height="18"/><rect x="15" y="3" width="4" height="18"/>';
+  const volOnSVG  = '<polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>';
+  const volOffSVG = '<polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>';
+
+  function updatePlayIcon() { playIcon.innerHTML = vid.paused ? playSVG : pauseSVG; }
+  function updateVolIcon()  { volIcon.innerHTML  = vid.muted  ? volOffSVG : volOnSVG; }
+
+  function updateTime() {
+    timeDisplay.textContent = `${fmt(vid.currentTime)} / ${fmt(vid.duration)}`;
+    const pct = vid.duration ? (vid.currentTime / vid.duration) * 100 : 0;
+    scrubProgress.style.width = `${pct}%`;
+    scrubThumb.style.left = `${pct}%`;
+    try {
+      if (vid.buffered?.length) {
+        scrubBuffer.style.width = `${Math.min(100, (vid.buffered.end(vid.buffered.length-1) / vid.duration) * 100)}%`;
+      }
+    } catch(e) {}
+  }
+
+  /* ── Play / Pause ── */
+  playBtn.addEventListener('click', async () => {
+    if (vid.paused) await vid.play(); else vid.pause();
+    updatePlayIcon();
+  });
+
+  /* ── Skip ── */
+  rewBtn.addEventListener('click', () => vid.currentTime = Math.max(0, vid.currentTime - 10));
+  fwdBtn.addEventListener('click', () => vid.currentTime = Math.min(vid.duration || Infinity, vid.currentTime + 10));
+
+  /* ── Volume ── */
+  muteBtn.addEventListener('click', () => { vid.muted = !vid.muted; updateVolIcon(); });
+  vol.addEventListener('input', () => {
+    vid.volume = Number(vol.value);
+    vid.muted = vid.volume === 0;
+    updateVolIcon();
+  });
+
+  /* ── Speed ── */
+  speed.addEventListener('change', () => vid.playbackRate = Number(speed.value));
+
+  /* ── Seek ── */
+  let dragging = false;
+  function seekTo(cx) {
+    const r = scrubContainer.getBoundingClientRect();
+    const x = Math.min(Math.max(cx - r.left, 0), r.width);
+    if (isFinite(vid.duration)) vid.currentTime = (x / r.width) * vid.duration;
+  }
+  scrubContainer.addEventListener('mousedown', e => { dragging = true; seekTo(e.clientX); });
+  window.addEventListener('mousemove', e => { if (dragging) seekTo(e.clientX); });
+  window.addEventListener('mouseup', () => dragging = false);
+  scrubContainer.addEventListener('touchstart', e => { dragging = true; seekTo(e.touches[0].clientX); }, { passive: true });
+  window.addEventListener('touchmove', e => { if (dragging) seekTo(e.touches[0].clientX); }, { passive: true });
+  window.addEventListener('touchend', () => dragging = false);
+
+  /* ── Fullscreen ── */
+  async function toggleFS() {
+    if (!document.fullscreenElement) await player.requestFullscreen();
+    else await document.exitFullscreen();
+  }
+  fsBtn.addEventListener('click', toggleFS);
+  vid.addEventListener('dblclick', toggleFS);
+
+  /* ── CC ── */
+  let ccOn = false;
+  ccBtn.addEventListener('click', () => { ccOn = !ccOn; ccBtn.style.color = ccOn ? 'var(--accent)' : ''; wakeUI(); });
+
+  /* ── Panels ── */
+  function togglePanel(el) { el.style.display = el.style.display === 'block' ? 'none' : 'block'; wakeUI(); }
+  xrayBtn.addEventListener('click', () => togglePanel(xray));
+  xrayClose.addEventListener('click', () => { xray.style.display = 'none'; wakeUI(); });
+  statsBtn.addEventListener('click', () => togglePanel(stats));
+
+  /* ── Keyboard ── */
+  window.addEventListener('keydown', async e => {
+    const tag = (document.activeElement?.tagName || '').toLowerCase();
+    if (['input','select','textarea'].includes(tag)) return;
+    if (e.code === 'Space') { e.preventDefault(); if (vid.paused) await vid.play(); else vid.pause(); updatePlayIcon(); }
+    if (e.key === 'f' || e.key === 'F') toggleFS();
+    if (e.key === 'm' || e.key === 'M') { vid.muted = !vid.muted; updateVolIcon(); }
+    if (e.key === 'x' || e.key === 'X') togglePanel(xray);
+    if (e.key === 's' || e.key === 'S') togglePanel(stats);
+    if (e.key === 'e' || e.key === 'E') toggleTray();
+    if (e.key === 'ArrowLeft')  vid.currentTime = Math.max(0, vid.currentTime - 10);
+    if (e.key === 'ArrowRight') vid.currentTime = Math.min(vid.duration || Infinity, vid.currentTime + 10);
+    if (e.key === 'Escape' && episodesTray.classList.contains('open')) closeTray();
+  });
+
+  /* ── Up Next ── */
+  let upnextTimer = null;
+  function showUpNext() {
+    if (upnext.style.display === 'block') return;
+    if (currentIdx + 1 >= VIDEOS.length) return;
+    upnextTitle.textContent = VIDEOS[currentIdx + 1].title;
+    upnext.style.display = 'block';
+    wakeUI();
+    let t = 8;
+    upnextCountdown.textContent = t;
+    clearInterval(upnextTimer);
+    upnextTimer = setInterval(() => {
+      t--;
+      upnextCountdown.textContent = t;
+      if (t <= 0) { clearInterval(upnextTimer); upnext.style.display = 'none'; loadVideo(currentIdx + 1); }
+    }, 1000);
+  }
+  playNextBtn.addEventListener('click', () => { clearInterval(upnextTimer); upnext.style.display = 'none'; loadVideo(currentIdx + 1); });
+  cancelNextBtn.addEventListener('click', () => { clearInterval(upnextTimer); upnext.style.display = 'none'; wakeUI(); });
+
+  /* ── Stats ── */
+  function updateStats() {
+    stRes.textContent = `${vid.videoWidth || '—'} × ${vid.videoHeight || '—'}`;
+    const q = vid.getVideoPlaybackQuality?.();
+    stDrop.textContent = q ? `${q.droppedVideoFrames ?? 0} / ${q.totalVideoFrames ?? 0}` : '—';
+    stRate.textContent = `${vid.playbackRate.toFixed(2)}x`;
+    try {
+      if (vid.buffered?.length) stBuf.textContent = `${Math.max(0, vid.buffered.end(vid.buffered.length-1) - vid.currentTime).toFixed(1)}s`;
+      else stBuf.textContent = '0.0s';
+    } catch(e) { stBuf.textContent = '—'; }
+  }
+
+  /* ── Loop counter ── */
+  let loopCount = 0, lastT = 0;
+  setInterval(() => {
+    const t = vid.currentTime;
+    if (isFinite(vid.duration) && lastT > vid.duration - 0.25 && t < 0.25) { loopCount++; stLoop.textContent = loopCount; }
+    lastT = t;
+    if (stats.style.display === 'block') updateStats();
+  }, 250);
+
+  /* ── Events ── */
+  vid.addEventListener('timeupdate', () => { updateTime(); if (isFinite(vid.duration) && vid.duration - vid.currentTime < 12) showUpNext(); });
+  vid.addEventListener('progress', updateTime);
+  vid.addEventListener('loadedmetadata', () => { vid.volume = Number(vol.value); updateTime(); updatePlayIcon(); updateStats(); });
+  vid.addEventListener('play',  () => { updatePlayIcon(); updateStats(); });
+  vid.addEventListener('pause', () => { updatePlayIcon(); updateStats(); });
+
+  /* ── Save the Look ── */
+  document.getElementById('shopBtn').addEventListener('click', () => {
+    const w = window.open('shop_the_vibe_numinosity.html', '_blank', 'noopener,noreferrer');
+    if (!w) alert('Popup blocked — please allow pop-ups or open shop_the_vibe_numinosity.html manually.');
+  });
+
+  window.addEventListener('message', ev => {
+    const msg = ev.data;
+    if (msg?.type === 'prime_mock_seek') { vid.currentTime = Math.max(0, Number(msg.time) || 0); vid.play(); wakeUI(); }
+  });
+
+  /* ── Init ── */
+  renderTray();
+  (async () => { try { await vid.play(); } catch(e) {} updatePlayIcon(); })();
+</script>
+</body>
+</html>

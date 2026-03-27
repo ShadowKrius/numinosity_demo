@@ -1,0 +1,911 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Numinosity — Saiyaara Collection</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Work+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    @font-face {
+      font-family: 'Decalotype';
+      src: url('Decalotype.otf') format('opentype');
+      font-weight: 100 900;
+      font-display: swap;
+    }
+    :root {
+      --lime: #e6f003;
+      --dark: #0A0A0A;
+      --surface: #111111;
+      --surface2: #161616;
+      --white: #F5F5F0;
+      --muted: rgba(245,245,240,.42);
+      --bright: rgba(245,245,240,.78);
+      --serif: 'Cormorant Garamond', Georgia, serif;
+      --sans: 'Work Sans', sans-serif;
+      --mono: 'Space Mono', monospace;
+      --display: 'Decalotype', 'Work Sans', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--dark);
+      color: var(--white);
+      font-family: var(--sans);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Noise texture overlay ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 9000; opacity: .18;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 48px;
+      background: rgba(10,10,10,.92);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(245,245,240,.06);
+    }
+    .logo {
+      font-family: var(--display);
+      font-size: 20px;
+      letter-spacing: .08em;
+      color: var(--lime);
+      border: 1px solid var(--lime);
+      padding: 4px 12px 2px;
+      text-decoration: none;
+      transition: background .3s, color .3s;
+    }
+    .logo:hover { background: var(--lime); color: var(--dark); }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      padding: 72px 48px 64px;
+      border-bottom: 1px solid rgba(245,245,240,.06);
+      overflow: hidden;
+      min-height: 380px;
+    }
+    .hero-glow {
+      position: absolute;
+      top: -40%; right: -10%;
+      width: 60vw; height: 60vw;
+      background: radial-gradient(circle, rgba(230,240,3,.06) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    /* Poster image — right side, masked */
+    .hero-poster {
+      position: absolute;
+      top: 0; right: 0; bottom: 0;
+      width: 55%;
+      max-width: 600px;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .hero-poster img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center center;
+      display: block;
+      opacity: .4;
+      mask-image: linear-gradient(to bottom, transparent 0%, black 18%, black 100%);
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 18%, black 100%);
+    }
+    /* Left fade — aggressive and long */
+    .hero-poster::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right, var(--dark) 0%, var(--dark) 5%, rgba(10,10,10,.6) 25%, rgba(10,10,10,.2) 50%, transparent 100%);
+      z-index: 1;
+    }
+    /* Bottom fade */
+    .hero-poster::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, var(--dark) 0%, rgba(10,10,10,.5) 30%, transparent 60%);
+      z-index: 2;
+    }
+
+    .hero-content { position: relative; z-index: 3; max-width: 640px; }
+    .hero-eyebrow {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: .22em;
+      color: var(--lime);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .hero-eyebrow::after {
+      content: ''; height: 1px; width: 32px;
+      background: rgba(230,240,3,.4);
+    }
+    .hero-title {
+      font-family: var(--serif);
+      font-size: clamp(36px, 5vw, 56px);
+      font-weight: 300;
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+    .hero-title em {
+      font-style: italic;
+      font-weight: 600;
+      color: var(--lime);
+    }
+    .hero-sub {
+      font-family: var(--sans);
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 420px;
+    }
+
+    /* ── CATEGORY CHIPS ── */
+    .cat-bar {
+      display: flex;
+      gap: 10px;
+      padding: 20px 48px;
+      border-bottom: 1px solid rgba(245,245,240,.06);
+      overflow-x: auto;
+      flex-wrap: wrap;
+    }
+    .cat-chip {
+      appearance: none;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      padding: 8px 16px;
+      border: 1px solid rgba(245,245,240,.12);
+      background: none;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all .2s;
+      white-space: nowrap;
+    }
+    .cat-chip:hover { color: var(--white); border-color: rgba(245,245,240,.25); }
+    .cat-chip.active {
+      color: var(--dark);
+      background: var(--lime);
+      border-color: var(--lime);
+    }
+
+    /* ── CATEGORY SECTION ── */
+    .cat-section {
+      padding: 48px 48px 24px;
+    }
+    .cat-section + .cat-section {
+      border-top: 1px solid rgba(245,245,240,.06);
+    }
+    .cat-heading {
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+    .cat-heading h2 {
+      font-family: var(--serif);
+      font-size: clamp(24px, 3vw, 36px);
+      font-weight: 300;
+      font-style: italic;
+    }
+    .cat-heading .count {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: .1em;
+    }
+
+    /* ── PRODUCT GRID ── */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .product-card {
+      cursor: pointer;
+      border: 1px solid rgba(245,245,240,.06);
+      background: var(--surface);
+      overflow: hidden;
+      transition: border-color .2s, transform .2s;
+    }
+    .product-card:hover {
+      border-color: rgba(230,240,3,.25);
+      transform: translateY(-2px);
+    }
+
+    .pc-image {
+      width: 100%;
+      aspect-ratio: 1;
+      background: var(--surface2);
+      overflow: hidden;
+      position: relative;
+    }
+    .pc-image img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform .4s ease;
+    }
+    .product-card:hover .pc-image img { transform: scale(1.04); }
+
+    .pc-social {
+      position: absolute;
+      bottom: 10px; right: 10px;
+      display: flex; align-items: center; gap: 5px;
+      font-family: var(--mono);
+      font-size: 9px;
+      color: rgba(245,245,240,.8);
+      background: rgba(10,10,10,.65);
+      backdrop-filter: blur(8px);
+      padding: 3px 8px;
+      border: 1px solid rgba(245,245,240,.08);
+    }
+    .pc-social .heart { color: var(--lime); font-style: normal; }
+
+    .pc-body { padding: 14px 16px; }
+    .pc-name {
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+    .pc-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .pc-price {
+      font-family: var(--sans);
+      font-size: 15px;
+      font-weight: 600;
+    }
+    .pc-rating {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted);
+      display: flex; align-items: center; gap: 4px;
+    }
+    .star { color: var(--lime); font-style: normal; }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.8);
+      backdrop-filter: blur(12px);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .3s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid rgba(230,240,3,.15);
+      width: min(960px, calc(100vw - 40px));
+      max-height: calc(100vh - 40px);
+      overflow-y: auto;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      position: relative;
+      transform: translateY(10px) scale(.98);
+      transition: transform .3s;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(230,240,3,.15) transparent;
+    }
+    .modal-overlay.open .modal { transform: none; }
+    .modal::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--lime), transparent);
+      opacity: .5;
+    }
+
+    .modal-media {
+      background: var(--dark);
+      border-right: 1px solid rgba(245,245,240,.06);
+      display: flex; align-items: center; justify-content: center;
+      min-height: 400px;
+    }
+    .modal-media img {
+      width: 100%; height: 100%;
+      object-fit: contain;
+      display: block;
+      max-height: 80vh;
+    }
+
+    .modal-body {
+      padding: 28px 28px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 16px; right: 16px;
+      appearance: none;
+      background: rgba(10,10,10,.6);
+      border: 1px solid rgba(245,245,240,.12);
+      color: var(--muted);
+      width: 36px; height: 36px;
+      display: grid; place-items: center;
+      cursor: pointer;
+      font-size: 16px;
+      z-index: 5;
+      transition: color .2s, border-color .2s;
+    }
+    .modal-close:hover { color: var(--lime); border-color: rgba(230,240,3,.3); }
+
+    .modal-eyebrow {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: .22em;
+      color: var(--lime);
+      text-transform: uppercase;
+    }
+    .modal-title {
+      font-family: var(--serif);
+      font-size: 28px;
+      font-weight: 300;
+      line-height: 1.2;
+    }
+    .modal-meta {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: .08em;
+      display: flex; gap: 10px; align-items: center;
+    }
+    .modal-desc {
+      font-family: var(--sans);
+      font-size: 13px;
+      color: var(--bright);
+      line-height: 1.7;
+    }
+
+    /* Links section */
+    .link-section {
+      border: 1px solid rgba(245,245,240,.08);
+      background: rgba(245,245,240,.02);
+      padding: 16px;
+    }
+    .link-section h4 {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .link-section .best-tag {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: .12em;
+      padding: 3px 10px;
+      background: rgba(230,240,3,.12);
+      border: 1px solid rgba(230,240,3,.3);
+      color: var(--lime);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .product-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(245,245,240,.06);
+      text-decoration: none;
+      transition: background .15s;
+    }
+    .product-link:last-child { border-bottom: none; }
+    .product-link:hover { background: rgba(245,245,240,.03); }
+
+    .pl-favicon {
+      width: 36px; height: 36px;
+      border: 1px solid rgba(245,245,240,.1);
+      background: var(--surface2);
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    .pl-text { min-width: 0; flex: 1; }
+    .pl-name {
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--white);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .pl-host {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .pl-social {
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--muted);
+      flex-shrink: 0;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .pl-social .heart { color: var(--lime); font-style: normal; }
+
+    .pl-arrow {
+      color: var(--muted);
+      font-size: 14px;
+      flex-shrink: 0;
+      transition: color .15s;
+    }
+    .product-link:hover .pl-arrow { color: var(--lime); }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 32px 48px;
+      border-top: 1px solid rgba(245,245,240,.06);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .footer-logo {
+      font-family: var(--display);
+      font-size: 16px;
+      letter-spacing: .08em;
+      color: var(--lime);
+    }
+    .footer-copy {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: .1em;
+      color: rgba(245,245,240,.25);
+    }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+      font-family: var(--sans);
+      font-size: 14px;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .modal { grid-template-columns: 1fr; }
+      .modal-media { min-height: 280px; border-right: none; border-bottom: 1px solid rgba(245,245,240,.06); }
+    }
+    @media (max-width: 768px) {
+      nav { padding: 14px 20px; }
+      .hero { padding: 48px 20px 40px; min-height: auto; }
+      .hero-poster { width: 55%; opacity: .7; }
+      .hero-poster img { opacity: .25; }
+      .cat-bar { padding: 16px 20px; }
+      .cat-section { padding: 32px 20px 16px; }
+      .product-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      footer { padding: 24px 20px; }
+      .modal-body { padding: 20px; }
+    }
+    @media (max-width: 480px) {
+      .product-grid { grid-template-columns: 1fr 1fr; }
+      .pc-body { padding: 10px 12px; }
+      .pc-name { font-size: 13px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="logo">NUMINOSITY.</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-poster"><img src="saiyaara_poster.jpg" alt="Saiyaara" /></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Saiyaara Collection</p>
+    <h1 class="hero-title">Shop the world of <em>Saiyaara</em></h1>
+    <p class="hero-sub">Every outfit, accessory, and detail — hand-picked from the screen to your doorstep. See it. Love it. Own it.</p>
+  </div>
+</section>
+
+<div class="cat-bar" id="catBar"></div>
+<div id="content"></div>
+
+<footer>
+  <span class="footer-logo">NUMINOSITY.</span>
+  <span class="footer-copy">© 2026 Numinosity. All rights reserved.</span>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <button class="modal-close" id="modalClose">✕</button>
+    <div class="modal-media"><img id="modalImg" alt="" /></div>
+    <div class="modal-body">
+      <p class="modal-eyebrow">From the collection</p>
+      <h2 class="modal-title" id="modalTitle"></h2>
+      <div class="modal-meta" id="modalMeta"></div>
+      <p class="modal-desc" id="modalDesc"></p>
+
+      <div class="link-section" id="bestMatchSection">
+        <h4>Best Match</h4>
+        <div class="best-tag">Best Match</div>
+        <a class="product-link" id="bestLink" href="#" target="_blank" rel="noopener noreferrer">
+          <img class="pl-favicon" id="bestFav" alt="" />
+          <div class="pl-text">
+            <div class="pl-name" id="bestName">Open product</div>
+            <div class="pl-host" id="bestHost"></div>
+          </div>
+          <div class="pl-social"><em class="heart">♥</em> <span id="bestLikes"></span></div>
+          <span class="pl-arrow">↗</span>
+        </a>
+      </div>
+
+      <div class="link-section" id="similarSection">
+        <h4>Similar Products</h4>
+        <div id="similarLinks"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ════════════════════════════════════════════
+     PRODUCT CATALOG
+     ════════════════════════════════════════════ */
+  const CATALOG = [
+    /* ── GET THE LOOK (Wardrobe) — first ── */
+    {
+      id:"mens-kurta", category:"Get the Look", name:"Cream Embroidered Kurta",
+      price:"₹3,800", rating:4.5, interest:289,
+      desc:"The standout piece from the sangeet sequence. Cream georgette with fine thread embroidery — elegant without trying too hard. Own the look.",
+      image:"thumbs/Mens Kurta Thumb.png", full_image:"full/Mens Kurta.webp",
+      links:{
+        best:{ url:"https://www.myntra.com/kurtas?f=Colour%3ACream%7CWhite%3A%3AGender%3Amen", name:"Myntra — Cream Kurtas for Men", likes:212 },
+        similar:[
+          { url:"https://www.ajio.com/s/mens-kurtas-cream", name:"AJIO — Cream Kurtas", likes:178 },
+          { url:"https://www.flipkart.com/search?q=mens+cream+embroidered+kurta", name:"Flipkart — Embroidered Kurtas", likes:145 },
+          { url:"https://www.fabindia.com/men/ethnic-wear/kurtas", name:"FabIndia — Men's Kurtas", likes:112 }
+        ]
+      }
+    },
+    {
+      id:"embroidered-top", category:"Get the Look", name:"Knit Camisole Top",
+      price:"₹2,900", rating:4.4, interest:198,
+      desc:"The balcony scene essential. A textured knit camisole with delicate jacquard detailing — effortless and intimate. Wear it your way.",
+      image:"thumbs/Embroidered Top Thumb.png", full_image:"full/Embroidered Top.webp",
+      links:{
+        best:{ url:"https://www.myntra.com/tops?f=Fabric%3AKnitted%3A%3AGender%3Awomen", name:"Myntra — Knit Tops for Women", likes:156 },
+        similar:[
+          { url:"https://www.ajio.com/s/womens-knit-tops", name:"AJIO — Women's Knit Tops", likes:123 },
+          { url:"https://www.amazon.in/s?k=women+knit+camisole+top", name:"Amazon India — Knit Camisoles", likes:98 },
+          { url:"https://www.hm.com/in/women/tops", name:"H&M India — Women's Tops", likes:87 }
+        ]
+      }
+    },
+    {
+      id:"yellow-shirt", category:"Get the Look", name:"Mustard Linen Shirt",
+      price:"₹1,800", rating:4.2, interest:176,
+      desc:"Rolled-up sleeves, market scene energy. A relaxed-fit mustard linen shirt with a mandarin collar — casual confidence you can buy.",
+      image:"thumbs/Yellow Shirt Thumb.png", full_image:"full/Yellow Shirt.jpg",
+      links:{
+        best:{ url:"https://www.myntra.com/shirts?f=Colour%3AYellow%7CMustard%3A%3AGender%3Amen", name:"Myntra — Mustard Shirts for Men", likes:134 },
+        similar:[
+          { url:"https://www.ajio.com/s/mens-yellow-shirts", name:"AJIO — Yellow Shirts", likes:98 },
+          { url:"https://www.amazon.in/s?k=mens+mustard+linen+shirt", name:"Amazon India — Linen Shirts", likes:76 },
+          { url:"https://www.flipkart.com/search?q=mens+mustard+shirt+linen", name:"Flipkart — Mustard Shirts", likes:65 }
+        ]
+      }
+    },
+
+    /* ── JEWELLERY & ACCESSORIES — second ── */
+    {
+      id:"jhumka-earrings", category:"Jewellery & Accessories", name:"Silver Jhumka Earrings",
+      price:"₹3,200", rating:4.8, interest:423,
+      desc:"The pair that catches every close-up. Intricately detailed sterling silver jhumkas — a statement piece you'll reach for again and again.",
+      image:"thumbs/Earrings Thumb.png", full_image:"full/Earrings.webp",
+      links:{
+        best:{ url:"https://www.caratlane.com/jewellery/earrings.html?category=Jhumka", name:"CaratLane — Jhumka Earrings", likes:312 },
+        similar:[
+          { url:"https://www.tanishq.co.in/jewellery/earrings.html", name:"Tanishq — Silver Earrings", likes:267 },
+          { url:"https://www.amazon.in/s?k=silver+jhumka+earrings+women", name:"Amazon India — Silver Jhumkas", likes:198 },
+          { url:"https://www.flipkart.com/search?q=silver+jhumka+earrings", name:"Flipkart — Jhumka Earrings", likes:145 }
+        ]
+      }
+    },
+    {
+      id:"maang-tikka", category:"Jewellery & Accessories", name:"Kundan Maang Tikka",
+      price:"₹4,800", rating:4.6, interest:356,
+      desc:"Crown your look like the bridal sequence. Warm gold and polki stones create an unmistakable silhouette — regal and ready to wear.",
+      image:"thumbs/Maang Tikka Thumb.png", full_image:"full/Maang Tikka.webp",
+      links:{
+        best:{ url:"https://www.caratlane.com/jewellery/maang-tikka.html", name:"CaratLane — Maang Tikka", likes:245 },
+        similar:[
+          { url:"https://www.tanishq.co.in/jewellery/maang-tikka.html", name:"Tanishq — Maang Tikka", likes:198 },
+          { url:"https://www.amazon.in/s?k=kundan+maang+tikka", name:"Amazon India — Kundan Tikka", likes:167 },
+          { url:"https://www.flipkart.com/search?q=kundan+maang+tikka", name:"Flipkart — Maang Tikka", likes:123 }
+        ]
+      }
+    },
+    {
+      id:"leather-bracelet", category:"Jewellery & Accessories", name:"Braided Leather Bracelet",
+      price:"₹2,200", rating:4.4, interest:189,
+      desc:"The rugged stack the male lead wears throughout. Adds instant edge to any casual outfit — layer it up.",
+      image:"thumbs/Mens Bracelet Thumb.png", full_image:"full/Mens Bracelet.webp",
+      links:{
+        best:{ url:"https://www.amazon.in/s?k=mens+leather+bracelet+braided", name:"Amazon India — Leather Bracelets", likes:134 },
+        similar:[
+          { url:"https://www.flipkart.com/search?q=mens+leather+bracelet", name:"Flipkart — Mens Bracelets", likes:98 },
+          { url:"https://www.roadsterlife.co.in/men/accessories/bracelets", name:"Roadster — Men's Bracelets", likes:76 },
+          { url:"https://www.myntra.com/bracelets?f=Gender%3Amen", name:"Myntra — Men's Bracelets", likes:65 }
+        ]
+      }
+    },
+    {
+      id:"mens-leather-chain", category:"Jewellery & Accessories", name:"Leather Cord Necklace",
+      price:"₹2,600", rating:4.3, interest:167,
+      desc:"Minimal leather cord with a silver pendant — the subtle detail that ties every layered look together. Get the exact one.",
+      image:"thumbs/Mens Leather Chain Thumb.png", full_image:"full/Mens Leather Chain.jpg",
+      links:{
+        best:{ url:"https://www.amazon.in/s?k=mens+leather+cord+necklace+pendant", name:"Amazon India — Leather Necklaces", likes:112 },
+        similar:[
+          { url:"https://www.flipkart.com/search?q=mens+leather+necklace", name:"Flipkart — Mens Necklaces", likes:87 },
+          { url:"https://www.myntra.com/necklaces-and-chains?f=Gender%3Amen", name:"Myntra — Men's Chains", likes:65 },
+          { url:"https://www.ajio.com/s/mens-chains", name:"AJIO — Men's Chains", likes:54 }
+        ]
+      }
+    },
+
+    /* ── STYLE YOUR SPACE (Set Design) — third ── */
+    {
+      id:"gray-chaise", category:"Style Your Space", name:"Gray Chaise Lounge",
+      price:"₹42,000", rating:4.6, interest:234,
+      desc:"The centrepiece of the living room set. Muted grey fabric, clean lines — bring the Saiyaara aesthetic home.",
+      image:"thumbs/Chaise Thumb.png", full_image:"full/Chaise.png",
+      links:{
+        best:{ url:"https://www.pepperfry.com/category/chaise-lounges.html", name:"Pepperfry Chaise Lounges", likes:189 },
+        similar:[
+          { url:"https://www.urbanladder.com/products/janet-chaise-lounger", name:"Urban Ladder — Janet Lounger", likes:142 },
+          { url:"https://www.ikea.com/in/en/cat/chaise-longues-10664/", name:"IKEA India — Chaise Longues", likes:97 },
+          { url:"https://www.flipkart.com/furniture/sofas/chaise-lounges/pr?sid=wwe,pia,fc4", name:"Flipkart — Chaise Lounges", likes:78 }
+        ]
+      }
+    },
+    {
+      id:"accent-pillows", category:"Style Your Space", name:"Textured Accent Pillows",
+      price:"₹3,500", rating:4.3, interest:312,
+      desc:"Layered warm neutrals that add instant depth to any room. The same mixed-weave covers used on set — now for your couch.",
+      image:"thumbs/Pillows Thumb.png", full_image:"full/Pillows.png",
+      links:{
+        best:{ url:"https://www.urbanladder.com/products/all-cushion-covers", name:"Urban Ladder — Cushion Covers", likes:201 },
+        similar:[
+          { url:"https://www.ikea.com/in/en/cat/cushion-covers-10671/", name:"IKEA India — Cushion Covers", likes:167 },
+          { url:"https://www.pepperfry.com/category/cushion-covers.html", name:"Pepperfry — Cushion Covers", likes:134 },
+          { url:"https://www.fabindia.com/home-furnishing/cushion-covers", name:"FabIndia — Cushion Covers", likes:89 }
+        ]
+      }
+    },
+    {
+      id:"full-length-mirror", category:"Style Your Space", name:"Rustic Full-Length Mirror",
+      price:"₹9,500", rating:4.5, interest:178,
+      desc:"The dressing room anchor. Weathered wood frame, farmhouse texture — perfect for your bedroom or hallway.",
+      image:"thumbs/Full Length Mirror Thumb.png", full_image:"full/Full Length Mirror.webp",
+      links:{
+        best:{ url:"https://www.pepperfry.com/category/mirrors.html", name:"Pepperfry — Full Length Mirrors", likes:145 },
+        similar:[
+          { url:"https://www.urbanladder.com/products/all-mirrors", name:"Urban Ladder — Mirrors", likes:112 },
+          { url:"https://www.amazon.in/s?k=full+length+mirror+wooden+frame", name:"Amazon India — Wooden Mirrors", likes:89 },
+          { url:"https://www.flipkart.com/search?q=full+length+mirror", name:"Flipkart — Full Length Mirrors", likes:67 }
+        ]
+      }
+    },
+    {
+      id:"half-circle-fan", category:"Style Your Space", name:"Gold Art Deco Fan",
+      price:"₹6,500", rating:4.2, interest:156,
+      desc:"A gold-leaf sculptural accent from the bookshelf set. A touch of opulence for your living room.",
+      image:"thumbs/Half Circle Fan Thumb.png", full_image:"full/Half Circle Fan.png",
+      links:{
+        best:{ url:"https://www.amazon.in/s?k=gold+metal+ornament+fan+decor", name:"Amazon India — Gold Fan Decor", likes:98 },
+        similar:[
+          { url:"https://www.pepperfry.com/category/table-decor.html", name:"Pepperfry — Table Décor", likes:76 },
+          { url:"https://www.urbanladder.com/products/all-decor-accessories", name:"Urban Ladder — Décor", likes:54 },
+          { url:"https://www.ellementry.com/table-decor", name:"Ellementry — Table Décor", likes:43 }
+        ]
+      }
+    }
+  ];
+
+  /* ── Helpers ── */
+  function hostOf(url) {
+    try { return new URL(url).hostname.replace(/^www\./,''); } catch(e) { return ''; }
+  }
+  function faviconUrl(url) {
+    const h = hostOf(url);
+    return h ? `https://www.google.com/s2/favicons?domain=${h}&sz=64` : '';
+  }
+  function fmtInterest(n) {
+    return n >= 1000 ? (n/1000).toFixed(1) + 'k' : String(n);
+  }
+
+  const categories = () => ['All', ...Array.from(new Set(CATALOG.map(x => x.category)))];
+
+  /* ── State ── */
+  let activeCat = 'All';
+
+  /* ── DOM ── */
+  const catBar = document.getElementById('catBar');
+  const content = document.getElementById('content');
+  const modal = document.getElementById('modal');
+
+  /* ── Render category chips ── */
+  function renderChips() {
+    catBar.innerHTML = '';
+    categories().forEach(cat => {
+      const btn = document.createElement('button');
+      btn.className = 'cat-chip' + (cat === activeCat ? ' active' : '');
+      btn.textContent = cat;
+      btn.onclick = () => { activeCat = cat; renderChips(); renderContent(); };
+      catBar.appendChild(btn);
+    });
+  }
+
+  /* ── Filter ── */
+  function filterItems() {
+    return CATALOG.filter(item => activeCat === 'All' || item.category === activeCat);
+  }
+
+  /* ── Render content grouped by category ── */
+  function renderContent() {
+    const items = filterItems();
+    content.innerHTML = '';
+
+    if (!items.length) {
+      content.innerHTML = '<div class="empty-state">No items match your search.</div>';
+      return;
+    }
+
+    if (activeCat === 'All') {
+      // Group by category
+      const grouped = {};
+      items.forEach(item => {
+        if (!grouped[item.category]) grouped[item.category] = [];
+        grouped[item.category].push(item);
+      });
+      Object.keys(grouped).forEach(cat => {
+        renderCategorySection(cat, grouped[cat]);
+      });
+    } else {
+      renderCategorySection(activeCat, items);
+    }
+  }
+
+  function renderCategorySection(catName, items) {
+    const section = document.createElement('div');
+    section.className = 'cat-section';
+    section.innerHTML = `
+      <div class="cat-heading">
+        <h2>${catName}</h2>
+        <span class="count">${items.length} item${items.length !== 1 ? 's' : ''}</span>
+      </div>
+    `;
+    const grid = document.createElement('div');
+    grid.className = 'product-grid';
+    items.forEach(item => grid.appendChild(createCard(item)));
+    section.appendChild(grid);
+    content.appendChild(section);
+  }
+
+  function createCard(item) {
+    const card = document.createElement('div');
+    card.className = 'product-card';
+    card.onclick = () => openModal(item);
+
+    card.innerHTML = `
+      <div class="pc-image">
+        <img src="${item.image}" alt="${item.name}" loading="lazy"
+             onerror="this.parentElement.style.background='var(--surface2)';this.style.display='none'" />
+        <div class="pc-social"><em class="heart">♥</em> ${fmtInterest(item.interest)}</div>
+      </div>
+      <div class="pc-body">
+        <div class="pc-name">${item.name}</div>
+        <div class="pc-row">
+          <span class="pc-price">${item.price}</span>
+          <span class="pc-rating"><em class="star">★</em> ${item.rating}</span>
+        </div>
+      </div>
+    `;
+    return card;
+  }
+
+  /* ── Modal ── */
+  function openModal(item) {
+    document.getElementById('modalImg').src = item.full_image || item.image;
+    document.getElementById('modalTitle').textContent = item.name;
+    document.getElementById('modalMeta').innerHTML =
+      `${item.category} &middot; ${item.price} &middot; <em class="star" style="color:var(--lime);font-style:normal">★</em> ${item.rating} &middot; <em class="heart" style="color:var(--lime);font-style:normal">♥</em> ${fmtInterest(item.interest)} interested`;
+    document.getElementById('modalDesc').textContent = item.desc;
+
+    // Best match
+    const best = item.links.best;
+    const bestLink = document.getElementById('bestLink');
+    bestLink.href = best.url;
+    document.getElementById('bestName').textContent = best.name;
+    document.getElementById('bestHost').textContent = hostOf(best.url);
+    document.getElementById('bestFav').src = faviconUrl(best.url);
+    document.getElementById('bestLikes').textContent = fmtInterest(best.likes);
+
+    // Similar
+    const simContainer = document.getElementById('similarLinks');
+    simContainer.innerHTML = '';
+    item.links.similar.forEach(s => {
+      const a = document.createElement('a');
+      a.className = 'product-link';
+      a.href = s.url;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      a.innerHTML = `
+        <img class="pl-favicon" src="${faviconUrl(s.url)}" alt="" />
+        <div class="pl-text">
+          <div class="pl-name">${s.name}</div>
+          <div class="pl-host">${hostOf(s.url)}</div>
+        </div>
+        <div class="pl-social"><em class="heart">♥</em> ${fmtInterest(s.likes)}</div>
+        <span class="pl-arrow">↗</span>
+      `;
+      simContainer.appendChild(a);
+    });
+
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.getElementById('modalClose').addEventListener('click', closeModal);
+  modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+  window.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  /* ── Listen for seek messages (legacy compat) ── */
+  window.addEventListener('message', ev => {
+    const msg = ev.data;
+    if (msg?.type === 'prime_mock_seek') {
+      try { window.opener?.postMessage(msg, '*'); } catch(e) {}
+    }
+  });
+
+  /* ── Init ── */
+  renderChips();
+  renderContent();
+</script>
+</body>
+</html>
