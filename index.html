@@ -25,7 +25,6 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ── Full-bleed player ── */
     .player {
       position: fixed;
       inset: 0;
@@ -40,7 +39,6 @@
       background: #000;
     }
 
-    /* ── Top chrome ── */
     .top-chrome {
       position: absolute;
       inset: 0 0 auto 0;
@@ -81,7 +79,6 @@
     }
     .now-playing .np-info .dot { opacity: .5; }
 
-    /* ── Save the Look button (bottom controls) ── */
     @font-face {
       font-family: 'Decalotype';
       src: url('Decalotype.otf') format('opentype');
@@ -108,7 +105,6 @@
       color: #0A0A0A;
     }
 
-    /* ── Chrome buttons ── */
     .chrome-btn {
       appearance: none; background: none; border: none;
       color: var(--text); cursor: pointer;
@@ -126,7 +122,6 @@
       color: var(--text-secondary);
     }
 
-    /* ── Bottom controls ── */
     .bottom-chrome {
       position: absolute;
       inset: auto 0 0 0;
@@ -212,7 +207,6 @@
     .speed-select:hover { background: rgba(255,255,255,.1); }
     .speed-select option { background: var(--surface); }
 
-    /* ── Episodes tray ── */
     .episodes-tray {
       position: absolute;
       inset: auto 0 0 0;
@@ -302,7 +296,6 @@
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
 
-    /* ── Overlay panels ── */
     .overlay-panel {
       position: absolute; z-index: 15;
       background: rgba(15,23,30,.92);
@@ -370,11 +363,9 @@
     .action-btn.secondary { background: rgba(255,255,255,.15); color: var(--text); }
     .action-btn.secondary:hover { background: rgba(255,255,255,.2); }
 
-    /* ── Idle ── */
     .player.idle .top-chrome,
     .player.idle .bottom-chrome { opacity: 0; pointer-events: none; }
 
-    /* ── Save the Look toast ── */
     .save-toast {
       position: fixed;
       top: 50%; left: 50%;
@@ -440,7 +431,6 @@
       to { stroke-dashoffset: 0; }
     }
 
-    /* ── Saved Looks end-of-clip popup ── */
     .saved-looks-popup {
       position: fixed;
       inset: 0;
@@ -557,11 +547,11 @@
 <body>
 
 <main class="player" id="player">
-  <video id="vid" playsinline muted autoplay loop preload="auto">
+  <!-- NO loop attribute — video plays once -->
+  <video id="vid" playsinline muted autoplay preload="auto">
     <source id="src" src="Saiyaara.mp4" type="video/mp4" />
   </video>
 
-  <!-- Save toast (center screen) -->
   <div class="save-toast" id="saveToast">
     <div class="toast-icon">
       <svg viewBox="0 0 24 24"><path class="check-path" d="M5 12l5 5L19 7"/></svg>
@@ -570,23 +560,21 @@
     <div class="toast-sub">We'll show you the collection at the end</div>
   </div>
 
-  <!-- End-of-clip saved looks popup -->
   <div class="saved-looks-popup" id="savedLooksPopup">
     <div class="saved-looks-card">
       <div class="sl-icon">
         <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
       </div>
-      <div class="sl-count" id="slCount">3 LOOKS SAVED</div>
-      <div class="sl-title">Your collection is ready</div>
-      <div class="sl-sub">Every outfit and detail you loved — hand-picked links, ready to browse and buy.</div>
+      <div class="sl-count" id="slCount">CLIP ENDED</div>
+      <div class="sl-title">Explore the Saiyaara Collection</div>
+      <div class="sl-sub">Every outfit, accessory, and detail from the screen — hand-picked links, ready to browse and buy.</div>
       <div class="sl-actions">
-        <button class="sl-cta" id="slCtaBtn">View My Saved Looks</button>
-        <button class="sl-dismiss" id="slDismiss">Maybe later</button>
+        <button class="sl-cta" id="slCtaBtn">Shop the Vibe</button>
+        <button class="sl-dismiss" id="slDismiss">Replay</button>
       </div>
     </div>
   </div>
 
-  <!-- Top chrome -->
   <div class="top-chrome" id="topChrome">
     <div class="top-left">
       <button class="back-btn" id="backBtn" title="Back">
@@ -610,7 +598,6 @@
     </div>
   </div>
 
-  <!-- X-Ray -->
   <div class="overlay-panel xray-panel" id="xray">
     <div class="panel-header">
       <h3>X-Ray</h3>
@@ -624,17 +611,14 @@
     </div>
   </div>
 
-  <!-- Stats -->
   <div class="overlay-panel stats-panel" id="stats">
     <h3>Playback Stats</h3>
     <div class="stat-row"><span class="stat-key">Resolution</span><span class="stat-val" id="stRes">&mdash;</span></div>
     <div class="stat-row"><span class="stat-key">Dropped Frames</span><span class="stat-val" id="stDrop">&mdash;</span></div>
     <div class="stat-row"><span class="stat-key">Playback Rate</span><span class="stat-val" id="stRate">&mdash;</span></div>
     <div class="stat-row"><span class="stat-key">Buffered</span><span class="stat-val" id="stBuf">&mdash;</span></div>
-    <div class="stat-row"><span class="stat-key">Loop Count</span><span class="stat-val" id="stLoop">0</span></div>
   </div>
 
-  <!-- Up Next -->
   <div class="overlay-panel upnext-panel" id="upnext">
     <div class="upnext-content">
       <div class="upnext-thumb"></div>
@@ -650,7 +634,6 @@
     </div>
   </div>
 
-  <!-- Episodes tray -->
   <div class="episodes-tray" id="episodesTray">
     <div class="tray-header">
       <h3>Episodes</h3>
@@ -659,7 +642,6 @@
     <div class="tray-scroll" id="trayScroll"></div>
   </div>
 
-  <!-- Bottom controls -->
   <div class="bottom-chrome" id="bottomChrome">
     <div class="scrub-container" id="scrubContainer">
       <div class="scrub-track">
@@ -691,10 +673,8 @@
 
       <div class="spacer"></div>
 
-      <!-- Save the Look -->
       <button class="save-look-btn" id="shopBtn" title="Save the Look">Save the Look</button>
 
-      <!-- Episodes button -->
       <button class="ctrl-btn" id="episodesBtn" title="Episodes (E)" style="gap:6px">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="5" rx="1"/><rect x="2" y="10" width="20" height="5" rx="1"/><rect x="2" y="17" width="12" height="5" rx="1"/></svg>
         <span style="font-size:13px;font-weight:600">Episodes</span>
@@ -725,16 +705,12 @@
 </main>
 
 <script>
-  /* ════════════════════════════════════════════
-     VIDEO LIBRARY
-     ════════════════════════════════════════════ */
   const VIDEOS = [
     { file: "Saiyaara.mp4",   title: "Saiyaara" },
     { file: "Episode2.mp4",   title: "Episode 2 — UI Demo" },
     { file: "BTS.mp4",        title: "Behind the Scenes" },
   ];
 
-  /* ── DOM ── */
   const player       = document.getElementById('player');
   const vid          = document.getElementById('vid');
   const vidSrc       = document.getElementById('src');
@@ -768,7 +744,6 @@
   const stDrop = document.getElementById('stDrop');
   const stRate = document.getElementById('stRate');
   const stBuf = document.getElementById('stBuf');
-  const stLoop = document.getElementById('stLoop');
   const episodesTray = document.getElementById('episodesTray');
   const episodesBtn  = document.getElementById('episodesBtn');
   const trayClose    = document.getElementById('trayClose');
@@ -779,15 +754,15 @@
   const slDismiss    = document.getElementById('slDismiss');
   const slCount      = document.getElementById('slCount');
 
-  /* ── State ── */
   let currentIdx = 0;
   let savedLookCount = 0;
   let endPopupShown = false;
+
+  // NOT looping — video plays once then stops
   vid.muted = true;
   vid.autoplay = true;
-  vid.loop = true;
+  vid.loop = false;
 
-  /* ── Load video ── */
   function loadVideo(idx) {
     if (idx < 0 || idx >= VIDEOS.length) return;
     currentIdx = idx;
@@ -796,15 +771,12 @@
     vid.load();
     vid.play().catch(() => {});
     titleText.textContent = v.title;
-    loopCount = 0;
-    stLoop.textContent = '0';
     endPopupShown = false;
     renderTray();
     updatePlayIcon();
     if (idx + 1 < VIDEOS.length) upnextTitle.textContent = VIDEOS[idx + 1].title;
   }
 
-  /* ── Tray cards ── */
   function renderTray() {
     trayScroll.innerHTML = '';
     VIDEOS.forEach((v, i) => {
@@ -824,14 +796,12 @@
     });
   }
 
-  /* ── Tray open / close ── */
   function openTray()  { episodesTray.classList.add('open'); wakeUI(); }
   function closeTray() { episodesTray.classList.remove('open'); wakeUI(); }
   function toggleTray() { episodesTray.classList.contains('open') ? closeTray() : openTray(); }
   episodesBtn.addEventListener('click', toggleTray);
   trayClose.addEventListener('click', closeTray);
 
-  /* ── Idle hide ── */
   let idleTimer = null;
   const IDLE_MS = 2500;
   function wakeUI() {
@@ -840,7 +810,7 @@
     idleTimer = setTimeout(() => {
       if (xray.style.display === 'block' || stats.style.display === 'block' ||
           upnext.style.display === 'block' || episodesTray.classList.contains('open')) return;
-      player.classList.add('idle');
+      if (!vid.paused) player.classList.add('idle');
     }, IDLE_MS);
   }
   ['mousemove','mousedown','touchstart','touchmove','keydown'].forEach(e =>
@@ -848,7 +818,6 @@
   );
   wakeUI();
 
-  /* ── Helpers ── */
   function fmt(t) {
     if (!isFinite(t)) return '00:00';
     return `${String(Math.floor(t/60)).padStart(2,'0')}:${String(Math.floor(t%60)).padStart(2,'0')}`;
@@ -874,17 +843,14 @@
     } catch(e) {}
   }
 
-  /* ── Play / Pause ── */
   playBtn.addEventListener('click', async () => {
     if (vid.paused) await vid.play(); else vid.pause();
     updatePlayIcon();
   });
 
-  /* ── Skip ── */
   rewBtn.addEventListener('click', () => vid.currentTime = Math.max(0, vid.currentTime - 10));
   fwdBtn.addEventListener('click', () => vid.currentTime = Math.min(vid.duration || Infinity, vid.currentTime + 10));
 
-  /* ── Volume ── */
   muteBtn.addEventListener('click', () => { vid.muted = !vid.muted; updateVolIcon(); });
   vol.addEventListener('input', () => {
     vid.volume = Number(vol.value);
@@ -892,10 +858,8 @@
     updateVolIcon();
   });
 
-  /* ── Speed ── */
   speed.addEventListener('change', () => vid.playbackRate = Number(speed.value));
 
-  /* ── Seek ── */
   let dragging = false;
   function seekTo(cx) {
     const r = scrubContainer.getBoundingClientRect();
@@ -909,7 +873,6 @@
   window.addEventListener('touchmove', e => { if (dragging) seekTo(e.touches[0].clientX); }, { passive: true });
   window.addEventListener('touchend', () => dragging = false);
 
-  /* ── Fullscreen ── */
   async function toggleFS() {
     if (!document.fullscreenElement) await player.requestFullscreen();
     else await document.exitFullscreen();
@@ -917,17 +880,14 @@
   fsBtn.addEventListener('click', toggleFS);
   vid.addEventListener('dblclick', toggleFS);
 
-  /* ── CC ── */
   let ccOn = false;
   ccBtn.addEventListener('click', () => { ccOn = !ccOn; ccBtn.style.color = ccOn ? 'var(--accent)' : ''; wakeUI(); });
 
-  /* ── Panels ── */
   function togglePanel(el) { el.style.display = el.style.display === 'block' ? 'none' : 'block'; wakeUI(); }
   xrayBtn.addEventListener('click', () => togglePanel(xray));
   xrayClose.addEventListener('click', () => { xray.style.display = 'none'; wakeUI(); });
   statsBtn.addEventListener('click', () => togglePanel(stats));
 
-  /* ── Keyboard ── */
   window.addEventListener('keydown', async e => {
     const tag = (document.activeElement?.tagName || '').toLowerCase();
     if (['input','select','textarea'].includes(tag)) return;
@@ -965,14 +925,12 @@
   playNextBtn.addEventListener('click', () => { clearInterval(upnextTimer); upnext.style.display = 'none'; loadVideo(currentIdx + 1); });
   cancelNextBtn.addEventListener('click', () => { clearInterval(upnextTimer); upnext.style.display = 'none'; wakeUI(); });
 
-  /* ── Save the Look (toast animation) ── */
+  /* ── Save the Look toast ── */
   let toastTimeout = null;
   function showSaveToast() {
     savedLookCount++;
-    // Reset animation by removing and re-adding
     saveToast.classList.remove('show', 'fade-out');
     clearTimeout(toastTimeout);
-    // Force reflow to restart CSS animations
     void saveToast.offsetWidth;
     saveToast.classList.add('show');
     toastTimeout = setTimeout(() => {
@@ -986,28 +944,48 @@
     wakeUI();
   });
 
-  /* ── End-of-clip saved looks popup ── */
-  function showSavedLooksPopup() {
-    if (endPopupShown || savedLookCount === 0) return;
+  /* ── End-of-video popup — ALWAYS shows ── */
+  function showEndPopup() {
+    if (endPopupShown) return;
     endPopupShown = true;
     vid.pause();
     updatePlayIcon();
-    slCount.textContent = `${savedLookCount} LOOK${savedLookCount !== 1 ? 'S' : ''} SAVED`;
+    wakeUI();
+    player.classList.remove('idle');
+
+    if (savedLookCount > 0) {
+      slCount.textContent = `${savedLookCount} LOOK${savedLookCount !== 1 ? 'S' : ''} SAVED`;
+    } else {
+      slCount.textContent = 'CLIP ENDED';
+    }
     savedLooksPopup.classList.add('show');
   }
+
   function closeSavedLooksPopup() {
     savedLooksPopup.classList.remove('show');
-    vid.play().catch(() => {});
-    updatePlayIcon();
-    wakeUI();
   }
 
+  // "Shop the Vibe" button opens the shop page
   slCtaBtn.addEventListener('click', () => {
     const w = window.open('shop_the_vibe_numinosity.html', '_blank', 'noopener,noreferrer');
     if (!w) alert('Popup blocked — please allow pop-ups or open shop_the_vibe_numinosity.html manually.');
     closeSavedLooksPopup();
   });
-  slDismiss.addEventListener('click', closeSavedLooksPopup);
+
+  // "Replay" button restarts the video
+  slDismiss.addEventListener('click', () => {
+    closeSavedLooksPopup();
+    endPopupShown = false;
+    vid.currentTime = 0;
+    vid.play().catch(() => {});
+    updatePlayIcon();
+    wakeUI();
+  });
+
+  /* ── Video ended event — the reliable way to detect end ── */
+  vid.addEventListener('ended', () => {
+    showEndPopup();
+  });
 
   /* ── Stats ── */
   function updateStats() {
@@ -1021,30 +999,11 @@
     } catch(e) { stBuf.textContent = '—'; }
   }
 
-  /* ── Loop counter & end-of-clip detection ── */
-  let loopCount = 0, lastT = 0;
   setInterval(() => {
-    const t = vid.currentTime;
-    if (isFinite(vid.duration) && lastT > vid.duration - 0.25 && t < 0.25) {
-      loopCount++;
-      stLoop.textContent = loopCount;
-      // Show the saved looks popup at the end of the first full playthrough
-      if (loopCount === 1 && savedLookCount > 0 && !endPopupShown) {
-        showSavedLooksPopup();
-      }
-    }
-    lastT = t;
     if (stats.style.display === 'block') updateStats();
   }, 250);
 
-  /* ── Events ── */
-  vid.addEventListener('timeupdate', () => {
-    updateTime();
-    // Show up-next only if no saved looks to show (or already shown)
-    if (isFinite(vid.duration) && vid.duration - vid.currentTime < 12) {
-      if (savedLookCount === 0 || endPopupShown) showUpNext();
-    }
-  });
+  vid.addEventListener('timeupdate', updateTime);
   vid.addEventListener('progress', updateTime);
   vid.addEventListener('loadedmetadata', () => { vid.volume = Number(vol.value); updateTime(); updatePlayIcon(); updateStats(); });
   vid.addEventListener('play',  () => { updatePlayIcon(); updateStats(); });
@@ -1055,7 +1014,6 @@
     if (msg?.type === 'prime_mock_seek') { vid.currentTime = Math.max(0, Number(msg.time) || 0); vid.play(); wakeUI(); }
   });
 
-  /* ── Init ── */
   renderTray();
   (async () => { try { await vid.play(); } catch(e) {} updatePlayIcon(); })();
 </script>

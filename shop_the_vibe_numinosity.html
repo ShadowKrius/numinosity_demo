@@ -103,7 +103,6 @@
       mask-image: linear-gradient(to bottom, transparent 0%, black 18%, black 100%);
       -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 18%, black 100%);
     }
-    /* Left fade — aggressive and long */
     .hero-poster::before {
       content: '';
       position: absolute;
@@ -111,7 +110,6 @@
       background: linear-gradient(to right, var(--dark) 0%, var(--dark) 5%, rgba(10,10,10,.6) 25%, rgba(10,10,10,.2) 50%, transparent 100%);
       z-index: 1;
     }
-    /* Bottom fade */
     .hero-poster::after {
       content: '';
       position: absolute;
@@ -152,6 +150,218 @@
       color: var(--muted);
       line-height: 1.7;
       max-width: 420px;
+    }
+
+    /* ════════════════════════════════════════════
+       CREATOR STORES
+       ════════════════════════════════════════════ */
+    .creator-stores-wrapper {
+      border-top: 1px solid rgba(245,245,240,.06);
+    }
+    .creator-stores-heading {
+      padding: 48px 48px 0;
+    }
+    .creator-stores-heading h2 {
+      font-family: var(--serif);
+      font-size: clamp(28px, 3.5vw, 42px);
+      font-weight: 300;
+      font-style: italic;
+      margin-bottom: 8px;
+    }
+    .creator-stores-heading .cs-sub {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: .16em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .creator-section {
+      padding: 40px 48px 32px;
+    }
+    .creator-section + .creator-section {
+      border-top: 1px solid rgba(245,245,240,.04);
+    }
+
+    .creator-header {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+    .creator-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: 2px solid rgba(230,240,3,.3);
+      overflow: hidden;
+      flex-shrink: 0;
+      background: var(--surface2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .creator-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .creator-avatar .avatar-placeholder {
+      font-family: var(--serif);
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--lime);
+      opacity: .7;
+    }
+    .creator-info { flex: 1; min-width: 0; }
+    .creator-name {
+      font-family: var(--serif);
+      font-size: 22px;
+      font-weight: 400;
+      font-style: italic;
+      line-height: 1.2;
+    }
+    .creator-role {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: .16em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+
+    .creator-scroll-wrapper {
+      position: relative;
+    }
+    .creator-scroll {
+      display: flex;
+      gap: 14px;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      padding-bottom: 8px;
+      scroll-snap-type: x proximity;
+    }
+
+
+
+    /* Hide default scrollbar when arrows present */
+    .creator-scroll { scrollbar-width: none; }
+    .creator-scroll::-webkit-scrollbar { display: none; }
+
+    .carousel-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(calc(-50% - 20px));
+      width: 40px; height: 40px;
+      border: 1px solid rgba(245,245,240,.15);
+      background: rgba(10,10,10,.85);
+      backdrop-filter: blur(8px);
+      color: var(--white);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 5;
+      transition: background .2s, border-color .2s, opacity .2s;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .carousel-arrow.visible {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .carousel-arrow:hover {
+      background: rgba(230,240,3,.15);
+      border-color: rgba(230,240,3,.4);
+    }
+    .carousel-arrow svg {
+      width: 18px; height: 18px;
+      stroke: currentColor; fill: none;
+      stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+    }
+    .carousel-arrow.left { left: -4px; }
+    .carousel-arrow.right { right: -4px; }
+
+    .creator-tile {
+      flex-shrink: 0;
+      width: 180px;
+      cursor: pointer;
+      border: 1px solid rgba(245,245,240,.06);
+      background: var(--surface);
+      overflow: hidden;
+      transition: border-color .2s, transform .2s;
+      scroll-snap-align: start;
+    }
+    .creator-tile:hover {
+      border-color: rgba(230,240,3,.25);
+      transform: translateY(-2px);
+    }
+    .ct-image {
+      width: 100%;
+      aspect-ratio: 3/4;
+      background: var(--surface2);
+      overflow: hidden;
+      position: relative;
+    }
+    .ct-image img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform .4s ease;
+    }
+    .creator-tile:hover .ct-image img { transform: scale(1.04); }
+
+    .ct-store-badge {
+      position: absolute;
+      top: 8px; left: 8px;
+      font-family: var(--mono);
+      font-size: 8px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: 3px 7px;
+      background: rgba(10,10,10,.7);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(245,245,240,.1);
+      color: var(--muted);
+    }
+    .ct-social {
+      position: absolute;
+      bottom: 8px; right: 8px;
+      display: flex; align-items: center; gap: 4px;
+      font-family: var(--mono);
+      font-size: 8px;
+      color: rgba(245,245,240,.8);
+      background: rgba(10,10,10,.65);
+      backdrop-filter: blur(8px);
+      padding: 3px 7px;
+      border: 1px solid rgba(245,245,240,.08);
+    }
+    .ct-social .heart { color: var(--lime); font-style: normal; }
+
+    .ct-body { padding: 10px 12px; }
+    .ct-name {
+      font-family: var(--sans);
+      font-size: 12px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 4px;
+    }
+    .ct-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .ct-price {
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .ct-store {
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--muted);
+      letter-spacing: .04em;
     }
 
     /* ── CATEGORY CHIPS ── */
@@ -512,11 +722,88 @@
       .product-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
       footer { padding: 24px 20px; }
       .modal-body { padding: 20px; }
+      .creator-section { padding: 32px 20px 24px; }
+  
+    /* Hide default scrollbar when arrows present */
+    .creator-scroll { scrollbar-width: none; }
+    .creator-scroll::-webkit-scrollbar { display: none; }
+
+    .carousel-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(calc(-50% - 20px));
+      width: 40px; height: 40px;
+      border: 1px solid rgba(245,245,240,.15);
+      background: rgba(10,10,10,.85);
+      backdrop-filter: blur(8px);
+      color: var(--white);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 5;
+      transition: background .2s, border-color .2s, opacity .2s;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .carousel-arrow.visible {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .carousel-arrow:hover {
+      background: rgba(230,240,3,.15);
+      border-color: rgba(230,240,3,.4);
+    }
+    .carousel-arrow svg {
+      width: 18px; height: 18px;
+      stroke: currentColor; fill: none;
+      stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+    }
+    .carousel-arrow.left { left: -4px; }
+    .carousel-arrow.right { right: -4px; }
+
+    .creator-tile { width: 156px; }
     }
     @media (max-width: 480px) {
       .product-grid { grid-template-columns: 1fr 1fr; }
       .pc-body { padding: 10px 12px; }
       .pc-name { font-size: 13px; }
+  
+    /* Hide default scrollbar when arrows present */
+    .creator-scroll { scrollbar-width: none; }
+    .creator-scroll::-webkit-scrollbar { display: none; }
+
+    .carousel-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(calc(-50% - 20px));
+      width: 40px; height: 40px;
+      border: 1px solid rgba(245,245,240,.15);
+      background: rgba(10,10,10,.85);
+      backdrop-filter: blur(8px);
+      color: var(--white);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 5;
+      transition: background .2s, border-color .2s, opacity .2s;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .carousel-arrow.visible {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .carousel-arrow:hover {
+      background: rgba(230,240,3,.15);
+      border-color: rgba(230,240,3,.4);
+    }
+    .carousel-arrow svg {
+      width: 18px; height: 18px;
+      stroke: currentColor; fill: none;
+      stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+    }
+    .carousel-arrow.left { left: -4px; }
+    .carousel-arrow.right { right: -4px; }
+
+    .creator-tile { width: 144px; }
     }
   </style>
 </head>
@@ -538,6 +825,15 @@
 
 <div class="cat-bar" id="catBar"></div>
 <div id="content"></div>
+
+<!-- ════ CREATOR STORES — below catalog ════ -->
+<div class="creator-stores-wrapper">
+  <div class="creator-stores-heading">
+    <h2>Creator Stores</h2>
+    <p class="cs-sub">Shop curated picks from the cast</p>
+  </div>
+  <div id="creatorStores"></div>
+</div>
 
 <footer>
   <span class="footer-logo">NUMINOSITY.</span>
@@ -579,6 +875,272 @@
 
 <script>
   /* ════════════════════════════════════════════
+     CREATOR STORES
+     ════════════════════════════════════════════
+     Each creator has a profile + 6-8 shoppable tiles.
+     Replace placeholder names, images, and products
+     with real data as you source it.
+  */
+  const CREATORS = [
+    {
+      name: "Aneet Padda",
+      role: "Lead Actress · Saiyaara",
+      avatar: "creators/aneet_avatar.jpg",       // replace with real path
+      initials: "A",
+      items: [
+        {
+          name: "Black Faux-Fur Jacket",
+          price: "₹8,500",
+          store: "Myntra",
+          interest: 312,
+          image: "creators/aneet/faux_fur_jacket.jpg",   // replace with real image
+          url: "https://www.myntra.com/jackets?q=faux+fur+jacket",
+          desc: "The statement faux-fur piece from the rooftop scene. Luxe texture, bold silhouette — instant drama.",
+          links: {
+            best: { url:"https://www.myntra.com/jackets?q=faux+fur+jacket", name:"Myntra — Faux Fur Jackets", likes:245 },
+            similar: [
+              { url:"https://www.ajio.com/s/faux-fur-jacket-women", name:"AJIO — Faux Fur Jackets", likes:178 },
+              { url:"https://www.amazon.in/s?k=women+faux+fur+jacket+black", name:"Amazon India — Faux Fur Jackets", likes:134 }
+            ]
+          }
+        },
+        {
+          name: "Emerald Wrap Dress",
+          price: "₹4,200",
+          store: "AJIO",
+          interest: 267,
+          image: "creators/aneet/emerald_dress.jpg",
+          url: "https://www.ajio.com/s/wrap-dress-green",
+          desc: "Deep emerald silk-blend wrap dress from the dinner sequence. Flattering cut, rich colour.",
+          links: {
+            best: { url:"https://www.ajio.com/s/wrap-dress-green", name:"AJIO — Green Wrap Dresses", likes:198 },
+            similar: [
+              { url:"https://www.myntra.com/dresses?q=emerald+wrap+dress", name:"Myntra — Wrap Dresses", likes:156 },
+              { url:"https://www.amazon.in/s?k=women+emerald+wrap+dress", name:"Amazon India — Wrap Dresses", likes:112 }
+            ]
+          }
+        },
+        {
+          name: "Gold Layered Necklace",
+          price: "₹2,800",
+          store: "CaratLane",
+          interest: 345,
+          image: "creators/aneet/gold_necklace.jpg",
+          url: "https://www.caratlane.com/jewellery/necklaces.html",
+          desc: "Delicate multi-layer gold chain seen in nearly every frame. The everyday luxury staple.",
+          links: {
+            best: { url:"https://www.caratlane.com/jewellery/necklaces.html", name:"CaratLane — Layered Necklaces", likes:267 },
+            similar: [
+              { url:"https://www.tanishq.co.in/jewellery/necklaces.html", name:"Tanishq — Gold Necklaces", likes:212 },
+              { url:"https://www.amazon.in/s?k=gold+layered+necklace+women", name:"Amazon India — Layered Necklaces", likes:156 }
+            ]
+          }
+        },
+        {
+          name: "Strappy Block Heels",
+          price: "₹3,600",
+          store: "Myntra",
+          interest: 198,
+          image: "creators/aneet/block_heels.jpg",
+          url: "https://www.myntra.com/heels?q=strappy+block+heels",
+          desc: "Nude strappy block heels from the sangeet. Comfortable enough to dance in, elegant enough to photograph.",
+          links: {
+            best: { url:"https://www.myntra.com/heels?q=strappy+block+heels", name:"Myntra — Block Heels", likes:145 },
+            similar: [
+              { url:"https://www.ajio.com/s/block-heels-women", name:"AJIO — Block Heels", likes:112 },
+              { url:"https://www.amazon.in/s?k=women+nude+strappy+block+heels", name:"Amazon India — Block Heels", likes:89 }
+            ]
+          }
+        },
+        {
+          name: "Mauve Satin Skirt",
+          price: "₹2,400",
+          store: "H&M",
+          interest: 178,
+          image: "creators/aneet/satin_skirt.jpg",
+          url: "https://www.hm.com/in/women/skirts",
+          desc: "Midi satin skirt in dusty mauve — the café scene essential. Pairs with anything.",
+          links: {
+            best: { url:"https://www.hm.com/in/women/skirts", name:"H&M India — Satin Skirts", likes:134 },
+            similar: [
+              { url:"https://www.myntra.com/skirts?q=satin+midi+skirt", name:"Myntra — Satin Skirts", likes:98 },
+              { url:"https://www.ajio.com/s/satin-skirt-women", name:"AJIO — Midi Skirts", likes:76 }
+            ]
+          }
+        },
+        {
+          name: "Oversized Sunglasses",
+          price: "₹1,800",
+          store: "Lenskart",
+          interest: 223,
+          image: "creators/aneet/sunglasses.jpg",
+          url: "https://www.lenskart.com/sunglasses.html",
+          desc: "Retro oversized frames from the market scene. Instant character upgrade.",
+          links: {
+            best: { url:"https://www.lenskart.com/sunglasses.html", name:"Lenskart — Oversized Sunglasses", likes:167 },
+            similar: [
+              { url:"https://www.myntra.com/sunglasses?q=oversized+sunglasses+women", name:"Myntra — Sunglasses", likes:123 },
+              { url:"https://www.amazon.in/s?k=women+oversized+sunglasses+retro", name:"Amazon India — Sunglasses", likes:89 }
+            ]
+          }
+        },
+        {
+          name: "Embroidered Clutch",
+          price: "₹3,200",
+          store: "FabIndia",
+          interest: 156,
+          image: "creators/aneet/clutch.jpg",
+          url: "https://www.fabindia.com/women/accessories/bags",
+          desc: "Hand-embroidered silk clutch from the ceremony scene. A keepsake you can carry.",
+          links: {
+            best: { url:"https://www.fabindia.com/women/accessories/bags", name:"FabIndia — Clutches", likes:112 },
+            similar: [
+              { url:"https://www.myntra.com/clutches?q=embroidered+clutch", name:"Myntra — Embroidered Clutches", likes:87 },
+              { url:"https://www.amazon.in/s?k=embroidered+silk+clutch+women", name:"Amazon India — Clutches", likes:65 }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      name: "Ahaan Panday",
+      role: "Lead Actor · Saiyaara",
+      avatar: "creators/ahaan_avatar.jpg",
+      initials: "A",
+      items: [
+        {
+          name: "Navy Linen Blazer",
+          price: "₹6,800",
+          store: "Myntra",
+          interest: 278,
+          image: "creators/ahaan/navy_blazer.jpg",
+          url: "https://www.myntra.com/blazers?q=navy+linen+blazer+men",
+          desc: "The effortless unstructured blazer from the evening terrace scene. Dressed up or down, it works.",
+          links: {
+            best: { url:"https://www.myntra.com/blazers?q=navy+linen+blazer+men", name:"Myntra — Linen Blazers", likes:212 },
+            similar: [
+              { url:"https://www.ajio.com/s/mens-linen-blazer", name:"AJIO — Linen Blazers", likes:167 },
+              { url:"https://www.amazon.in/s?k=mens+navy+linen+blazer", name:"Amazon India — Linen Blazers", likes:123 }
+            ]
+          }
+        },
+        {
+          name: "White Henley Tee",
+          price: "₹1,200",
+          store: "AJIO",
+          interest: 345,
+          image: "creators/ahaan/white_henley.jpg",
+          url: "https://www.ajio.com/s/mens-henley-white",
+          desc: "The understated base layer for half the film. Cotton henley, relaxed fit, mandatory wardrobe piece.",
+          links: {
+            best: { url:"https://www.ajio.com/s/mens-henley-white", name:"AJIO — Henley Tees", likes:267 },
+            similar: [
+              { url:"https://www.myntra.com/tshirts?q=white+henley+men", name:"Myntra — Henley T-Shirts", likes:198 },
+              { url:"https://www.amazon.in/s?k=mens+white+henley+tshirt", name:"Amazon India — Henley Tees", likes:145 }
+            ]
+          }
+        },
+        {
+          name: "Tan Chelsea Boots",
+          price: "₹5,400",
+          store: "Clarks",
+          interest: 198,
+          image: "creators/ahaan/chelsea_boots.jpg",
+          url: "https://www.myntra.com/boots?q=tan+chelsea+boots+men",
+          desc: "Burnished tan leather Chelseas — the footwear constant across every outfit change.",
+          links: {
+            best: { url:"https://www.myntra.com/boots?q=tan+chelsea+boots+men", name:"Myntra — Chelsea Boots", likes:156 },
+            similar: [
+              { url:"https://www.amazon.in/s?k=mens+tan+chelsea+boots+leather", name:"Amazon India — Chelsea Boots", likes:112 },
+              { url:"https://www.ajio.com/s/mens-chelsea-boots", name:"AJIO — Chelsea Boots", likes:89 }
+            ]
+          }
+        },
+        {
+          name: "Olive Cargo Trousers",
+          price: "₹2,800",
+          store: "H&M",
+          interest: 234,
+          image: "creators/ahaan/cargo_trousers.jpg",
+          url: "https://www.hm.com/in/men/trousers",
+          desc: "Tapered olive cargos from the chase sequence. Functional pockets, cinematic silhouette.",
+          links: {
+            best: { url:"https://www.hm.com/in/men/trousers", name:"H&M India — Cargo Trousers", likes:178 },
+            similar: [
+              { url:"https://www.myntra.com/trousers?q=olive+cargo+men", name:"Myntra — Cargo Trousers", likes:145 },
+              { url:"https://www.amazon.in/s?k=mens+olive+cargo+trousers+tapered", name:"Amazon India — Cargo Trousers", likes:98 }
+            ]
+          }
+        },
+        {
+          name: "Silver Chain Bracelet",
+          price: "₹2,200",
+          store: "Amazon",
+          interest: 167,
+          image: "creators/ahaan/chain_bracelet.jpg",
+          url: "https://www.amazon.in/s?k=mens+silver+chain+bracelet",
+          desc: "Chunky silver curb-chain bracelet stacked on set. The finishing touch to every sleeve roll.",
+          links: {
+            best: { url:"https://www.amazon.in/s?k=mens+silver+chain+bracelet", name:"Amazon India — Chain Bracelets", likes:123 },
+            similar: [
+              { url:"https://www.myntra.com/bracelets?q=silver+chain+bracelet+men", name:"Myntra — Men's Bracelets", likes:98 },
+              { url:"https://www.flipkart.com/search?q=mens+silver+chain+bracelet", name:"Flipkart — Silver Bracelets", likes:76 }
+            ]
+          }
+        },
+        {
+          name: "Aviator Sunglasses",
+          price: "₹2,600",
+          store: "Lenskart",
+          interest: 289,
+          image: "creators/ahaan/aviators.jpg",
+          url: "https://www.lenskart.com/sunglasses/aviator.html",
+          desc: "Classic gold-frame aviators from the motorcycle scene. Non-negotiable cool.",
+          links: {
+            best: { url:"https://www.lenskart.com/sunglasses/aviator.html", name:"Lenskart — Aviator Sunglasses", likes:212 },
+            similar: [
+              { url:"https://www.myntra.com/sunglasses?q=gold+aviator+men", name:"Myntra — Aviator Sunglasses", likes:167 },
+              { url:"https://www.amazon.in/s?k=mens+gold+aviator+sunglasses", name:"Amazon India — Aviators", likes:123 }
+            ]
+          }
+        },
+        {
+          name: "Textured Pocket Square",
+          price: "₹800",
+          store: "FabIndia",
+          interest: 134,
+          image: "creators/ahaan/pocket_square.jpg",
+          url: "https://www.fabindia.com/men/accessories",
+          desc: "The silk pocket square that elevated every blazer shot. Small detail, big impact.",
+          links: {
+            best: { url:"https://www.fabindia.com/men/accessories", name:"FabIndia — Pocket Squares", likes:89 },
+            similar: [
+              { url:"https://www.myntra.com/pocket-squares", name:"Myntra — Pocket Squares", likes:67 },
+              { url:"https://www.amazon.in/s?k=silk+pocket+square+men", name:"Amazon India — Pocket Squares", likes:54 }
+            ]
+          }
+        },
+        {
+          name: "Black Leather Watch",
+          price: "₹4,500",
+          store: "Titan",
+          interest: 256,
+          image: "creators/ahaan/leather_watch.jpg",
+          url: "https://www.titan.co.in/watches/men",
+          desc: "Minimal black-dial watch on a leather strap. Seen in every close-up — the quiet flex.",
+          links: {
+            best: { url:"https://www.titan.co.in/watches/men", name:"Titan — Men's Watches", likes:198 },
+            similar: [
+              { url:"https://www.myntra.com/watches?q=black+leather+strap+watch+men", name:"Myntra — Leather Watches", likes:145 },
+              { url:"https://www.amazon.in/s?k=mens+black+leather+watch+minimal", name:"Amazon India — Leather Watches", likes:112 }
+            ]
+          }
+        }
+      ]
+    }
+  ];
+
+  /* ════════════════════════════════════════════
      PRODUCT CATALOG
      ════════════════════════════════════════════ */
   const CATALOG = [
@@ -589,11 +1151,11 @@
       desc:"The standout piece from the sangeet sequence. Cream georgette with fine thread embroidery — elegant without trying too hard. Own the look.",
       image:"thumbs/Mens Kurta Thumb.png", full_image:"full/Mens Kurta.webp",
       links:{
-        best:{ url:"https://www.myntra.com/kurtas?f=Colour%3ACream%7CWhite%3A%3AGender%3Amen", name:"Myntra — Cream Kurtas for Men", likes:212 },
+        best:{ url:"https://www.amazon.in/DIVISIVE-Sequince-Embroidered-Cotton-DKRT16_L_White/dp/B0CR94SHTP/ref=sr_1_1?crid=3VJDP0OAICI8X&dib=eyJ2IjoiMSJ9.xYMLgszwHJuFGyhhPOUQTAHCligjrsL32F69gst8UZAbc-enmrJcSYPZb1PfiJjBb5ed5mUvXZa9nFHE2wsS42mxBOlRNpigVSJcfM2O5qoUCfkTWRw5s53JNTG10uXp5aUP3GyvDSo1pK29qexFrqf_jJLwO0DhfyeOyiHfsfacVIa320ibIvXjaRBhBHwa0WcLLEMF4hGkiMGcEPtlUVnQOsMYEbSMhUztTTRHGZb6OGCfkFp36ccFGNB6CSg0osOfgd955F2ba6KuWYgJ9vCrBvBwnMD1pLcoBrVjdrk.URXTSJ0Qr1Dn65fZYoVoxJ8ypRowMFU5E-S43swet7w&dib_tag=se&keywords=mens%2Bwhite%2Bkurta%2BEmbroidered&qid=1772837662&sprefix=mens%2Bwhite%2Bkurta%2Bembroidered%2Caps%2C323&sr=8-1&th=1&psc=1", name:"Amazon — DIVISIVE Embroidered Cotton Kurta", likes:212 },
         similar:[
-          { url:"https://www.ajio.com/s/mens-kurtas-cream", name:"AJIO — Cream Kurtas", likes:178 },
-          { url:"https://www.flipkart.com/search?q=mens+cream+embroidered+kurta", name:"Flipkart — Embroidered Kurtas", likes:145 },
-          { url:"https://www.fabindia.com/men/ethnic-wear/kurtas", name:"FabIndia — Men's Kurtas", likes:112 }
+          { url:"https://www.amazon.in/See-Designs-Cotton-Regular-SDKT1095_White_XL/dp/B0BLV9LZM4/ref=sr_1_23?crid=23S3WIT2NM5HO&dib=eyJ2IjoiMSJ9.2ESRWLCELO8s--7KbHx10V1NOW38mHmDv-AP-G-EvrnS_SYsvk7b7pt8niP5DuClu3dZ_bhpaiTgyPpEref9hnpZw0jm1bl_BjTwI0C2oJ30jlb7vfpLY4_Fge8A_tQzzYX2XaMgu1CsXCSGA5u3pj0o4-LSmRO5mglEK-uHYvfufg7x5UunrN7AEop4rOWPyr5Ebse4s9l8mquV19Zl3X-zIGeEhkbkZypiRZSxNoYmGfaj4gfnot1a2jv2HvVJMApLOSIGMrxfTDqMF1s6QGfDGSpamiVMeIjiJ1tfRFM.ba3qM1x59DKQlV2NGgkU2FqDAQcGJlsm1zRfCN4H7LM&dib_tag=se&keywords=mens%2Bwhite%2Bkurta&qid=1772837580&sprefix=mens%2Bwhite%2B%2Caps%2C386&sr=8-23&th=1&psc=1", name:"Amazon — See Designs Cotton Kurta", likes:178 },
+          { url:"https://www.meesho.com/white-new-pattern-design-lucknowi-kurta-only-mirrorwork-embroidery-embellished/p/ahoaa8", name:"Meesho — Lucknowi Mirrorwork Kurta", likes:145 },
+          { url:"https://www.myntra.com/kurtas/royal+kurta/royal-kurta-men-white-embroidered-chikankari-cotton-straight-kurta/20100358/buy", name:"Myntra — Royal Kurta Chikankari", likes:112 }
         ]
       }
     },
@@ -603,11 +1165,11 @@
       desc:"The balcony scene essential. A textured knit camisole with delicate jacquard detailing — effortless and intimate. Wear it your way.",
       image:"thumbs/Embroidered Top Thumb.png", full_image:"full/Embroidered Top.webp",
       links:{
-        best:{ url:"https://www.myntra.com/tops?f=Fabric%3AKnitted%3A%3AGender%3Awomen", name:"Myntra — Knit Tops for Women", likes:156 },
+        best:{ url:"https://www.ae.com/Us/En/p/aerie/clearance/tops/tank-tops/superchill-cotton-heart-jacquard-tank-top/4448_4490_708", name:"Aerie — Superchill Cotton Jacquard Tank", likes:156 },
         similar:[
-          { url:"https://www.ajio.com/s/womens-knit-tops", name:"AJIO — Women's Knit Tops", likes:123 },
-          { url:"https://www.amazon.in/s?k=women+knit+camisole+top", name:"Amazon India — Knit Camisoles", likes:98 },
-          { url:"https://www.hm.com/in/women/tops", name:"H&M India — Women's Tops", likes:87 }
+          { url:"https://www.ardenfair.com/buy/product/superchill-cotton-heart-jacquard-tank-top-aerie-69e99f?model=3&variant=0", name:"Arden Fair — Superchill Jacquard Tank", likes:123 },
+          { url:"https://www.myntra.com/tops/only/only-cotton-tank-top/39385808/buy", name:"Myntra — ONLY Cotton Tank Top", likes:98 },
+          { url:"https://www.myntra.com/tops/sassafras+basics/sassafras-basics-scoop-neck-tank-top/23286058/buy", name:"Myntra — SASSAFRAS Scoop Neck Tank", likes:87 }
         ]
       }
     },
@@ -617,11 +1179,11 @@
       desc:"Rolled-up sleeves, market scene energy. A relaxed-fit mustard linen shirt with a mandarin collar — casual confidence you can buy.",
       image:"thumbs/Yellow Shirt Thumb.png", full_image:"full/Yellow Shirt.jpg",
       links:{
-        best:{ url:"https://www.myntra.com/shirts?f=Colour%3AYellow%7CMustard%3A%3AGender%3Amen", name:"Myntra — Mustard Shirts for Men", likes:134 },
+        best:{ url:"https://www.amazon.in/XKIND-Cotton-Regular-Casual-Placket/dp/B0GJCHJXD1/ref=sr_1_4_sspa?crid=3Y9I04RRS3SE&dib=eyJ2IjoiMSJ9.jgLknUDmlfKDz2jcfe5937VIGCFI5wO4prDOeDCV0_h5rE_7QCJ6IYUHz539K9h1DmCEHLrGTGo7MY5KeLHuLfqMJADuP3MiYDacIap77G-LRxsPqMSilv-UtrmYROG4o1-32d2rwqudCE5bzXlPfZxxvE4xqKtjJBYt3wrMzOU3mMMJeqwbtCTmygcwnxCJtw-N0vTmikxDi0bYY7FZ9_hSQG6RGU94Dmt1TVxbQ7lDdceXKBVGrSVeFwi0ovr4f_kFRjImOGZbvs89Rmz9_wajx5qAr7mNt31G4XEDRXs.of51qZBxQoKafa1cZ75-FCRapnE8QUb3WJOktzpb32c&dib_tag=se&keywords=men%2Blight%2Byellow%2Bshirt&qid=1772838417&sprefix=men%2Blight%2Byellow%2Bshirt%2Caps%2C311&sr=8-4-spons&aref=xnqe0pNsqP&sp_csd=d2lkZ2V0TmFtZT1zcF9hdGY&th=1&psc=1", name:"Amazon — XKIND Cotton Casual Shirt", likes:134 },
         similar:[
-          { url:"https://www.ajio.com/s/mens-yellow-shirts", name:"AJIO — Yellow Shirts", likes:98 },
-          { url:"https://www.amazon.in/s?k=mens+mustard+linen+shirt", name:"Amazon India — Linen Shirts", likes:76 },
-          { url:"https://www.flipkart.com/search?q=mens+mustard+shirt+linen", name:"Flipkart — Mustard Shirts", likes:65 }
+          { url:"https://www.amazon.in/Arrow-Manhattan-Solid-Shirt-Yellow/dp/B0F9FNJXX7/ref=sr_1_16?crid=3Y9I04RRS3SE&dib=eyJ2IjoiMSJ9.jgLknUDmlfKDz2jcfe5937VIGCFI5wO4prDOeDCV0_h5rE_7QCJ6IYUHz539K9h1DmCEHLrGTGo7MY5KeLHuLfqMJADuP3MiYDacIap77G-LRxsPqMSilv-UtrmYROG4o1-32d2rwqudCE5bzXlPfZxxvE4xqKtjJBYt3wrMzOU3mMMJeqwbtCTmygcwnxCJtw-N0vTmikxDi0bYY7FZ9_hSQG6RGU94Dmt1TVxbQ7lDdceXKBVGrSVeFwi0ovr4f_kFRjImOGZbvs89Rmz9_wajx5qAr7mNt31G4XEDRXs.of51qZBxQoKafa1cZ75-FCRapnE8QUb3WJOktzpb32c&dib_tag=se&keywords=men%2Blight%2Byellow%2Bshirt&qid=1772838417&sprefix=men%2Blight%2Byellow%2Bshirt%2Caps%2C311&sr=8-16&th=1&psc=1", name:"Amazon — Arrow Manhattan Yellow Shirt", likes:98 },
+          { url:"https://www.myntra.com/shirts/basics/basics-men-slim-fit-opaque-casual-shirt/31653428/buy", name:"Myntra — BASICS Slim Fit Casual Shirt", likes:76 },
+          { url:"https://www.amazon.in/Van-Heusen-Modern-VSSFUSLF674427_Light-Yellow/dp/B0F29628VG/ref=sr_1_26?crid=3Y9I04RRS3SE&dib=eyJ2IjoiMSJ9.jgLknUDmlfKDz2jcfe5937VIGCFI5wO4prDOeDCV0_h5rE_7QCJ6IYUHz539K9h1DmCEHLrGTGo7MY5KeLHuLfqMJADuP3MiYDacIap77G-LRxsPqMSilv-UtrmYROG4o1-32d2rwqudCE5bzXlPfZxxvE4xqKtjJBYt3wrMzOU3mMMJeqwbtCTmygcwnxCJtw-N0vTmikxDi0bYY7FZ9_hSQG6RGU94Dmt1TVxbQ7lDdceXKBVGrSVeFwi0ovr4f_kFRjImOGZbvs89Rmz9_wajx5qAr7mNt31G4XEDRXs.of51qZBxQoKafa1cZ75-FCRapnE8QUb3WJOktzpb32c&dib_tag=se&keywords=men%2Blight%2Byellow%2Bshirt&qid=1772838417&sprefix=men%2Blight%2Byellow%2Bshirt%2Caps%2C311&sr=8-26&th=1&psc=1", name:"Amazon — Van Heusen Light Yellow Shirt", likes:65 }
         ]
       }
     },
@@ -764,6 +1326,138 @@
   const catBar = document.getElementById('catBar');
   const content = document.getElementById('content');
   const modal = document.getElementById('modal');
+  const creatorStoresEl = document.getElementById('creatorStores');
+
+  /* ════════════════════════════════════════════
+     RENDER CREATOR STORES
+     ════════════════════════════════════════════ */
+  function renderCreatorStores() {
+    creatorStoresEl.innerHTML = '';
+    CREATORS.forEach(creator => {
+      const section = document.createElement('div');
+      section.className = 'creator-section';
+
+      // Header
+      const header = document.createElement('div');
+      header.className = 'creator-header';
+      header.innerHTML = `
+        <div class="creator-avatar">
+          <img src="${creator.avatar}" alt="${creator.name}"
+               onerror="this.style.display='none';this.parentElement.querySelector('.avatar-placeholder').style.display='block'" />
+          <span class="avatar-placeholder" style="display:none">${creator.initials}</span>
+        </div>
+        <div class="creator-info">
+          <div class="creator-name">${creator.name}</div>
+          <div class="creator-role">${creator.role}</div>
+        </div>
+      `;
+      section.appendChild(header);
+
+      // Scroll container
+      const wrapper = document.createElement('div');
+      wrapper.className = 'creator-scroll-wrapper';
+      const scroll = document.createElement('div');
+      scroll.className = 'creator-scroll';
+
+      // Create arrow buttons
+      const leftArrow = document.createElement('button');
+      leftArrow.className = 'carousel-arrow left';
+      leftArrow.innerHTML = '<svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>';
+      const rightArrow = document.createElement('button');
+      rightArrow.className = 'carousel-arrow right visible';
+      rightArrow.innerHTML = '<svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>';
+
+      creator.items.forEach(item => {
+        const tile = document.createElement('div');
+        tile.className = 'creator-tile';
+        tile.onclick = () => openCreatorModal(item, creator.name);
+        tile.innerHTML = `
+          <div class="ct-image">
+            <img src="${item.image}" alt="${item.name}" loading="lazy"
+                 onerror="this.parentElement.style.background='var(--surface2)';this.style.display='none'" />
+            <div class="ct-store-badge">${item.store}</div>
+            <div class="ct-social"><em class="heart">♥</em> ${fmtInterest(item.interest)}</div>
+          </div>
+          <div class="ct-body">
+            <div class="ct-name">${item.name}</div>
+            <div class="ct-meta">
+              <span class="ct-price">${item.price}</span>
+              <span class="ct-store">${item.store}</span>
+            </div>
+          </div>
+        `;
+        scroll.appendChild(tile);
+      });
+
+      // Arrow handlers
+      const SCROLL_AMT = 400;
+      leftArrow.addEventListener('click', () => { scroll.scrollBy({ left: -SCROLL_AMT, behavior: 'smooth' }); });
+      rightArrow.addEventListener('click', () => { scroll.scrollBy({ left: SCROLL_AMT, behavior: 'smooth' }); });
+      function updateArrows() {
+        const atStart = scroll.scrollLeft <= 8;
+        const atEnd = scroll.scrollLeft + scroll.clientWidth >= scroll.scrollWidth - 8;
+        leftArrow.classList.toggle('visible', !atStart);
+        rightArrow.classList.toggle('visible', !atEnd);
+      }
+      scroll.addEventListener('scroll', updateArrows, { passive: true });
+      requestAnimationFrame(updateArrows);
+
+      wrapper.appendChild(leftArrow);
+      wrapper.appendChild(scroll);
+      wrapper.appendChild(rightArrow);
+      section.appendChild(wrapper);
+      creatorStoresEl.appendChild(section);
+    });
+  }
+
+  /* ── Open modal for creator item ── */
+  function openCreatorModal(item, creatorName) {
+    document.getElementById('modalImg').src = item.image;
+    document.getElementById('modalTitle').textContent = item.name;
+    document.getElementById('modalMeta').innerHTML =
+      `${creatorName}'s Store &middot; ${item.price} &middot; <em class="heart" style="color:var(--lime);font-style:normal">♥</em> ${fmtInterest(item.interest)} interested`;
+    document.getElementById('modalDesc').textContent = item.desc || '';
+
+    if (item.links) {
+      const best = item.links.best;
+      const bestLink = document.getElementById('bestLink');
+      bestLink.href = best.url;
+      document.getElementById('bestName').textContent = best.name;
+      document.getElementById('bestHost').textContent = hostOf(best.url);
+      document.getElementById('bestFav').src = faviconUrl(best.url);
+      document.getElementById('bestLikes').textContent = fmtInterest(best.likes);
+      document.getElementById('bestMatchSection').style.display = '';
+
+      const simContainer = document.getElementById('similarLinks');
+      simContainer.innerHTML = '';
+      if (item.links.similar) {
+        item.links.similar.forEach(s => {
+          const a = document.createElement('a');
+          a.className = 'product-link';
+          a.href = s.url;
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+          a.innerHTML = `
+            <img class="pl-favicon" src="${faviconUrl(s.url)}" alt="" />
+            <div class="pl-text">
+              <div class="pl-name">${s.name}</div>
+              <div class="pl-host">${hostOf(s.url)}</div>
+            </div>
+            <div class="pl-social"><em class="heart">♥</em> ${fmtInterest(s.likes)}</div>
+            <span class="pl-arrow">↗</span>
+          `;
+          simContainer.appendChild(a);
+        });
+      }
+      document.getElementById('similarSection').style.display = item.links.similar?.length ? '' : 'none';
+    } else {
+      document.getElementById('bestMatchSection').style.display = 'none';
+      document.getElementById('similarSection').style.display = 'none';
+    }
+
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
 
   /* ── Render category chips ── */
   function renderChips() {
@@ -859,6 +1553,7 @@
     document.getElementById('bestHost').textContent = hostOf(best.url);
     document.getElementById('bestFav').src = faviconUrl(best.url);
     document.getElementById('bestLikes').textContent = fmtInterest(best.likes);
+    document.getElementById('bestMatchSection').style.display = '';
 
     const simContainer = document.getElementById('similarLinks');
     simContainer.innerHTML = '';
@@ -879,6 +1574,7 @@
       `;
       simContainer.appendChild(a);
     });
+    document.getElementById('similarSection').style.display = '';
 
     modal.classList.add('open');
     document.body.style.overflow = 'hidden';
@@ -900,6 +1596,7 @@
   });
 
   /* ── Init ── */
+  renderCreatorStores();
   renderChips();
   renderContent();
 </script>
