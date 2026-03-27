@@ -20,7 +20,7 @@
       --surface: #111111;
       --surface2: #161616;
       --white: #F5F5F0;
-      --muted: rgba(245,245,240,.42);
+      --muted: rgba(245,245,240,.65);
       --bright: rgba(245,245,240,.78);
       --serif: 'Cormorant Garamond', Georgia, serif;
       --sans: 'Work Sans', sans-serif;
@@ -99,7 +99,7 @@
       object-fit: cover;
       object-position: center center;
       display: block;
-      opacity: .4;
+      opacity: .9;
       mask-image: linear-gradient(to bottom, transparent 0%, black 18%, black 100%);
       -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 18%, black 100%);
     }
@@ -506,7 +506,7 @@
       nav { padding: 14px 20px; }
       .hero { padding: 48px 20px 40px; min-height: auto; }
       .hero-poster { width: 55%; opacity: .7; }
-      .hero-poster img { opacity: .25; }
+      .hero-poster img { opacity: .75; }
       .cat-bar { padding: 16px 20px; }
       .cat-section { padding: 32px 20px 16px; }
       .product-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
@@ -793,7 +793,6 @@
     }
 
     if (activeCat === 'All') {
-      // Group by category
       const grouped = {};
       items.forEach(item => {
         if (!grouped[item.category]) grouped[item.category] = [];
@@ -853,7 +852,6 @@
       `${item.category} &middot; ${item.price} &middot; <em class="star" style="color:var(--lime);font-style:normal">★</em> ${item.rating} &middot; <em class="heart" style="color:var(--lime);font-style:normal">♥</em> ${fmtInterest(item.interest)} interested`;
     document.getElementById('modalDesc').textContent = item.desc;
 
-    // Best match
     const best = item.links.best;
     const bestLink = document.getElementById('bestLink');
     bestLink.href = best.url;
@@ -862,7 +860,6 @@
     document.getElementById('bestFav').src = faviconUrl(best.url);
     document.getElementById('bestLikes').textContent = fmtInterest(best.likes);
 
-    // Similar
     const simContainer = document.getElementById('similarLinks');
     simContainer.innerHTML = '';
     item.links.similar.forEach(s => {
@@ -895,7 +892,6 @@
   modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
   window.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-  /* ── Listen for seek messages (legacy compat) ── */
   window.addEventListener('message', ev => {
     const msg = ev.data;
     if (msg?.type === 'prime_mock_seek') {

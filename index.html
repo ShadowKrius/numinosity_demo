@@ -373,6 +373,185 @@
     /* ── Idle ── */
     .player.idle .top-chrome,
     .player.idle .bottom-chrome { opacity: 0; pointer-events: none; }
+
+    /* ── Save the Look toast ── */
+    .save-toast {
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%) scale(0.85);
+      z-index: 100;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity .3s ease, transform .3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .save-toast.show {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+    .save-toast.fade-out {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(1.05);
+    }
+    .save-toast .toast-icon {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      background: rgba(230,240,3,.15);
+      border: 2px solid rgba(230,240,3,.5);
+      display: flex; align-items: center; justify-content: center;
+      animation: toast-pulse 0.5s ease-out;
+    }
+    .save-toast .toast-icon svg {
+      width: 32px; height: 32px;
+      stroke: #e6f003;
+      fill: none;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .save-toast .toast-icon svg .check-path {
+      stroke-dasharray: 30;
+      stroke-dashoffset: 30;
+      animation: draw-check 0.4s 0.15s ease forwards;
+    }
+    .save-toast .toast-text {
+      font-family: 'Decalotype', 'Helvetica Neue', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: .06em;
+      color: #e6f003;
+      text-shadow: 0 0 20px rgba(230,240,3,.3);
+    }
+    .save-toast .toast-sub {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 12px;
+      color: rgba(255,255,255,.5);
+      margin-top: -6px;
+    }
+    @keyframes toast-pulse {
+      0% { transform: scale(0.5); opacity: 0; }
+      60% { transform: scale(1.1); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes draw-check {
+      to { stroke-dashoffset: 0; }
+    }
+
+    /* ── Saved Looks end-of-clip popup ── */
+    .saved-looks-popup {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      background: rgba(0,0,0,.75);
+      backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .4s ease;
+    }
+    .saved-looks-popup.show {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .saved-looks-card {
+      background: rgba(15,23,30,.95);
+      border: 1px solid rgba(230,240,3,.2);
+      border-radius: 6px;
+      padding: 36px 44px;
+      text-align: center;
+      max-width: 420px;
+      width: calc(100% - 40px);
+      transform: translateY(20px) scale(.95);
+      transition: transform .4s cubic-bezier(.4,0,.2,1);
+      position: relative;
+      overflow: hidden;
+    }
+    .saved-looks-popup.show .saved-looks-card {
+      transform: translateY(0) scale(1);
+    }
+    .saved-looks-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(to right, transparent, #e6f003, transparent);
+      opacity: .6;
+    }
+    .saved-looks-card .sl-icon {
+      width: 56px; height: 56px;
+      margin: 0 auto 20px;
+      border-radius: 50%;
+      background: rgba(230,240,3,.1);
+      border: 1px solid rgba(230,240,3,.3);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .saved-looks-card .sl-icon svg {
+      width: 28px; height: 28px;
+      stroke: #e6f003; fill: none;
+      stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+    }
+    .saved-looks-card .sl-count {
+      font-family: 'Decalotype', 'Helvetica Neue', sans-serif;
+      font-size: 13px;
+      letter-spacing: .1em;
+      color: #e6f003;
+      margin-bottom: 8px;
+    }
+    .saved-looks-card .sl-title {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: #f2f4f5;
+      line-height: 1.3;
+      margin-bottom: 8px;
+    }
+    .saved-looks-card .sl-sub {
+      font-size: 13px;
+      color: rgba(255,255,255,.5);
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+    .saved-looks-card .sl-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+    }
+    .saved-looks-card .sl-cta {
+      appearance: none;
+      background: #e6f003;
+      color: #0A0A0A;
+      border: none;
+      font-family: 'Decalotype', 'Helvetica Neue', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      padding: 12px 32px;
+      cursor: pointer;
+      transition: background .2s, transform .15s;
+      width: 100%;
+      max-width: 260px;
+    }
+    .saved-looks-card .sl-cta:hover {
+      background: #d4de03;
+      transform: translateY(-1px);
+    }
+    .saved-looks-card .sl-dismiss {
+      appearance: none;
+      background: none;
+      border: none;
+      color: rgba(255,255,255,.4);
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 12px;
+      cursor: pointer;
+      padding: 6px 12px;
+      transition: color .15s;
+    }
+    .saved-looks-card .sl-dismiss:hover { color: rgba(255,255,255,.7); }
   </style>
 </head>
 <body>
@@ -381,6 +560,31 @@
   <video id="vid" playsinline muted autoplay loop preload="auto">
     <source id="src" src="Saiyaara.mp4" type="video/mp4" />
   </video>
+
+  <!-- Save toast (center screen) -->
+  <div class="save-toast" id="saveToast">
+    <div class="toast-icon">
+      <svg viewBox="0 0 24 24"><path class="check-path" d="M5 12l5 5L19 7"/></svg>
+    </div>
+    <div class="toast-text">Look Saved</div>
+    <div class="toast-sub">We'll show you the collection at the end</div>
+  </div>
+
+  <!-- End-of-clip saved looks popup -->
+  <div class="saved-looks-popup" id="savedLooksPopup">
+    <div class="saved-looks-card">
+      <div class="sl-icon">
+        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      </div>
+      <div class="sl-count" id="slCount">3 LOOKS SAVED</div>
+      <div class="sl-title">Your collection is ready</div>
+      <div class="sl-sub">Every outfit and detail you loved — hand-picked links, ready to browse and buy.</div>
+      <div class="sl-actions">
+        <button class="sl-cta" id="slCtaBtn">View My Saved Looks</button>
+        <button class="sl-dismiss" id="slDismiss">Maybe later</button>
+      </div>
+    </div>
+  </div>
 
   <!-- Top chrome -->
   <div class="top-chrome" id="topChrome">
@@ -523,10 +727,6 @@
 <script>
   /* ════════════════════════════════════════════
      VIDEO LIBRARY
-     ────────────────────────────────────────────
-     Add / remove entries here. Each needs:
-       file  — mp4 filename (same folder as HTML)
-       title — display name shown in player
      ════════════════════════════════════════════ */
   const VIDEOS = [
     { file: "Saiyaara.mp4",   title: "Saiyaara" },
@@ -573,9 +773,16 @@
   const episodesBtn  = document.getElementById('episodesBtn');
   const trayClose    = document.getElementById('trayClose');
   const trayScroll   = document.getElementById('trayScroll');
+  const saveToast    = document.getElementById('saveToast');
+  const savedLooksPopup = document.getElementById('savedLooksPopup');
+  const slCtaBtn     = document.getElementById('slCtaBtn');
+  const slDismiss    = document.getElementById('slDismiss');
+  const slCount      = document.getElementById('slCount');
 
   /* ── State ── */
   let currentIdx = 0;
+  let savedLookCount = 0;
+  let endPopupShown = false;
   vid.muted = true;
   vid.autoplay = true;
   vid.loop = true;
@@ -591,6 +798,7 @@
     titleText.textContent = v.title;
     loopCount = 0;
     stLoop.textContent = '0';
+    endPopupShown = false;
     renderTray();
     updatePlayIcon();
     if (idx + 1 < VIDEOS.length) upnextTitle.textContent = VIDEOS[idx + 1].title;
@@ -731,7 +939,10 @@
     if (e.key === 'e' || e.key === 'E') toggleTray();
     if (e.key === 'ArrowLeft')  vid.currentTime = Math.max(0, vid.currentTime - 10);
     if (e.key === 'ArrowRight') vid.currentTime = Math.min(vid.duration || Infinity, vid.currentTime + 10);
-    if (e.key === 'Escape' && episodesTray.classList.contains('open')) closeTray();
+    if (e.key === 'Escape') {
+      if (savedLooksPopup.classList.contains('show')) { closeSavedLooksPopup(); return; }
+      if (episodesTray.classList.contains('open')) closeTray();
+    }
   });
 
   /* ── Up Next ── */
@@ -754,6 +965,50 @@
   playNextBtn.addEventListener('click', () => { clearInterval(upnextTimer); upnext.style.display = 'none'; loadVideo(currentIdx + 1); });
   cancelNextBtn.addEventListener('click', () => { clearInterval(upnextTimer); upnext.style.display = 'none'; wakeUI(); });
 
+  /* ── Save the Look (toast animation) ── */
+  let toastTimeout = null;
+  function showSaveToast() {
+    savedLookCount++;
+    // Reset animation by removing and re-adding
+    saveToast.classList.remove('show', 'fade-out');
+    clearTimeout(toastTimeout);
+    // Force reflow to restart CSS animations
+    void saveToast.offsetWidth;
+    saveToast.classList.add('show');
+    toastTimeout = setTimeout(() => {
+      saveToast.classList.add('fade-out');
+      setTimeout(() => saveToast.classList.remove('show', 'fade-out'), 300);
+    }, 1800);
+  }
+
+  document.getElementById('shopBtn').addEventListener('click', () => {
+    showSaveToast();
+    wakeUI();
+  });
+
+  /* ── End-of-clip saved looks popup ── */
+  function showSavedLooksPopup() {
+    if (endPopupShown || savedLookCount === 0) return;
+    endPopupShown = true;
+    vid.pause();
+    updatePlayIcon();
+    slCount.textContent = `${savedLookCount} LOOK${savedLookCount !== 1 ? 'S' : ''} SAVED`;
+    savedLooksPopup.classList.add('show');
+  }
+  function closeSavedLooksPopup() {
+    savedLooksPopup.classList.remove('show');
+    vid.play().catch(() => {});
+    updatePlayIcon();
+    wakeUI();
+  }
+
+  slCtaBtn.addEventListener('click', () => {
+    const w = window.open('shop_the_vibe_numinosity.html', '_blank', 'noopener,noreferrer');
+    if (!w) alert('Popup blocked — please allow pop-ups or open shop_the_vibe_numinosity.html manually.');
+    closeSavedLooksPopup();
+  });
+  slDismiss.addEventListener('click', closeSavedLooksPopup);
+
   /* ── Stats ── */
   function updateStats() {
     stRes.textContent = `${vid.videoWidth || '—'} × ${vid.videoHeight || '—'}`;
@@ -766,27 +1021,34 @@
     } catch(e) { stBuf.textContent = '—'; }
   }
 
-  /* ── Loop counter ── */
+  /* ── Loop counter & end-of-clip detection ── */
   let loopCount = 0, lastT = 0;
   setInterval(() => {
     const t = vid.currentTime;
-    if (isFinite(vid.duration) && lastT > vid.duration - 0.25 && t < 0.25) { loopCount++; stLoop.textContent = loopCount; }
+    if (isFinite(vid.duration) && lastT > vid.duration - 0.25 && t < 0.25) {
+      loopCount++;
+      stLoop.textContent = loopCount;
+      // Show the saved looks popup at the end of the first full playthrough
+      if (loopCount === 1 && savedLookCount > 0 && !endPopupShown) {
+        showSavedLooksPopup();
+      }
+    }
     lastT = t;
     if (stats.style.display === 'block') updateStats();
   }, 250);
 
   /* ── Events ── */
-  vid.addEventListener('timeupdate', () => { updateTime(); if (isFinite(vid.duration) && vid.duration - vid.currentTime < 12) showUpNext(); });
+  vid.addEventListener('timeupdate', () => {
+    updateTime();
+    // Show up-next only if no saved looks to show (or already shown)
+    if (isFinite(vid.duration) && vid.duration - vid.currentTime < 12) {
+      if (savedLookCount === 0 || endPopupShown) showUpNext();
+    }
+  });
   vid.addEventListener('progress', updateTime);
   vid.addEventListener('loadedmetadata', () => { vid.volume = Number(vol.value); updateTime(); updatePlayIcon(); updateStats(); });
   vid.addEventListener('play',  () => { updatePlayIcon(); updateStats(); });
   vid.addEventListener('pause', () => { updatePlayIcon(); updateStats(); });
-
-  /* ── Save the Look ── */
-  document.getElementById('shopBtn').addEventListener('click', () => {
-    const w = window.open('shop_the_vibe_numinosity.html', '_blank', 'noopener,noreferrer');
-    if (!w) alert('Popup blocked — please allow pop-ups or open shop_the_vibe_numinosity.html manually.');
-  });
 
   window.addEventListener('message', ev => {
     const msg = ev.data;
