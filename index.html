@@ -566,7 +566,7 @@
         <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
       </div>
       <div class="sl-count" id="slCount">CLIP ENDED</div>
-      <div class="sl-title">Explore the Saiyaara Collection</div>
+      <div class="sl-title">Explore the Saiyaara Collection on <span style="font-family:'Decalotype','Helvetica Neue',sans-serif;color:#e6f003;letter-spacing:.06em">NUMINOSITY.</span></div>
       <div class="sl-sub">Every outfit, accessory, and detail from the screen — hand-picked links, ready to browse and buy.</div>
       <div class="sl-actions">
         <button class="sl-cta" id="slCtaBtn">Shop the Vibe</button>
@@ -929,6 +929,7 @@
   let toastTimeout = null;
   function showSaveToast() {
     savedLookCount++;
+    document.querySelector('.save-toast .toast-text').textContent = `Look Saved · ${savedLookCount}`;
     saveToast.classList.remove('show', 'fade-out');
     clearTimeout(toastTimeout);
     void saveToast.offsetWidth;
