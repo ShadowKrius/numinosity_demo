@@ -1375,7 +1375,9 @@
 
   /* ── Open modal for creator item ── */
   function openCreatorModal(item, creatorName) {
-    document.getElementById('modalImg').src = item.image;
+    const modalImg = document.getElementById('modalImg');
+    modalImg.src = '';
+    modalImg.src = item.image;
     document.getElementById('modalTitle').textContent = item.name;
     document.getElementById('modalMeta').innerHTML =
       `${creatorName}'s Store &middot; ${item.price} &middot; <em class="heart" style="color:var(--lime);font-style:normal">♥</em> ${fmtInterest(item.interest)} interested`;
@@ -1503,7 +1505,9 @@
 
   /* ── Modal ── */
   function openModal(item) {
-    document.getElementById('modalImg').src = item.full_image || item.image;
+    const modalImg = document.getElementById('modalImg');
+    modalImg.src = '';
+    modalImg.src = item.full_image || item.image;
     document.getElementById('modalTitle').textContent = item.name;
     document.getElementById('modalMeta').innerHTML =
       `${item.category} &middot; ${item.price} &middot; <em class="star" style="color:var(--lime);font-style:normal">★</em> ${item.rating} &middot; <em class="heart" style="color:var(--lime);font-style:normal">♥</em> ${fmtInterest(item.interest)} interested`;
